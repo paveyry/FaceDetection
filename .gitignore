@@ -4,3 +4,4 @@
 *.swp
 *.swo
 objdetect
+_build
