@@ -1,8 +1,13 @@
-CXX = g++
-CXXFLAGS= -Wall -Wextra -pedantic -std=c++14 -o3
-LDLIBS= -pthread -lrt -ltbb
+BUILD_DIR=_build
+BIN=objdetect
 
-all:
+all: $(BUILD_DIR) cmake
 
-clang: CXX = clang++
-clang: all
+$(BUILD_DIR):
+	mkdir -p $@
+
+cmake:
+	cd $(BUILD_DIR) && cmake .. && make
+
+clean:
+	rm -rf $(BIN) $(BUILD_DIR)
