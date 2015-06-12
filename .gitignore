@@ -1,4 +1,6 @@
 *.o
 *.so
 *.d
-
+*.swp
+*.swo
+objdetect
