@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 project(ObjectDetection)
 
 set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CPP_FLAGS "`pkg-config --cflags sdl`")
 set (CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -std=c++14 -pedantic -O3 -fPIC")
+
+find_package(SDL)
 
 file(
   GLOB_RECURSE
@@ -17,4 +20,4 @@ add_executable(
   ${sources_files}
   )
 
-target_link_libraries(objdetect tbb rt)
+target_link_libraries(objdetect tbb rt ${SDL_LIBRARY})
