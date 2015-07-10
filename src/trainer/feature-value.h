@@ -5,6 +5,8 @@
 #ifndef FACERECOG_FEATURE_VALUE_H
 #define FACERECOG_FEATURE_VALUE_H
 
+#include <bits/stl_bvector.h>
+
 class FeatureValue
 {
 public:
@@ -14,13 +16,15 @@ public:
           , value(value)
   {}
 
+  std::vector<FeatureValue> compute_all_values(std::vector<TestImage>& tests, Feature feature);
+  std::vector<FeatureValue> compute_all_values_sorted(std::vector<TestImage>& tests, Feature feature);
+
   bool operator==(const FeatureValue& other);
   bool operator!=(const FeatureValue& other);
   bool operator<=(const FeatureValue& other);
   bool operator<(const FeatureValue& other);
   bool operator>=(const FeatureValue& other);
   bool operator>(const FeatureValue& other);
-  
 
 public:
   short test_index_;
