@@ -12,7 +12,7 @@ class FeatureValue
 public:
 
   FeatureValue(short test_index_, int value)
-          : test_index_(test_index_)
+          : test_index(test_index_)
           , value(value)
   {}
 
@@ -27,7 +27,7 @@ public:
   bool operator>(const FeatureValue& other);
 
 public:
-  short test_index_;
+  short test_index;
   int value;
 };
 
