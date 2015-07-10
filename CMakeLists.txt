@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(ObjectDetection)
+project(FaceRecog)
 
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CPP_FLAGS "`pkg-config --cflags sdl`")
@@ -12,6 +12,6 @@ file(GLOB_RECURSE sources_files src/*)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
-add_executable(objdetect ${sources_files})
+add_executable(face-recog ${sources_files})
 
-target_link_libraries(objdetect tbb rt ${SDL_LIBRARY})
+target_link_libraries(face-recog tbb rt ${SDL_LIBRARY})
