@@ -1,17 +1,24 @@
-cmake_minimum_required(VERSION 2.8)
-
-project(FaceRecog)
+cmake_minimum_required(VERSION 2.6)
+project(face-recog)
+set(EXECUTABLE_NAME "face-recog")
 
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CPP_FLAGS "`pkg-config --cflags sdl`")
-set (CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -std=c++14 -pedantic -fPIC")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -std=c++14 -pedantic -fPIC")
 
-find_package(SDL)
-
+# Define sources and executable
 file(GLOB_RECURSE sources_files src/*)
+add_executable(${EXECUTABLE_NAME} ${sources_files})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
-add_executable(face-recog ${sources_files})
+# Detect and add SFML
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+#Find any version 2.X of SFML
+#See the FindSFML.cmake file for additional details and instructions
+find_package(SFML 2 REQUIRED system window graphics network audio)
+if(SFML_FOUND)
+  include_directories(${SFML_INCLUDE_DIR})
+  target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
+endif()
 
-target_link_libraries(face-recog tbb rt ${SDL_LIBRARY})
+# Install target
+install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
