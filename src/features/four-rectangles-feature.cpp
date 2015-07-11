@@ -55,7 +55,7 @@ namespace violajones
     return compute_value(top_left, 1f, image);
   }
 
-  std::string FourRectanglesFeature::to_string()
+  std::string FourRectanglesFeature::get_type()
   {
     return "FourRectanglesFeature";
   }

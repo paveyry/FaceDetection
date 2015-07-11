@@ -21,7 +21,7 @@ namespace violajones
 
     virtual int compute_value(IntegralImage image) = 0;
 
-    virtual std::string to_string() = 0;
+    virtual std::string get_type() = 0;
 
     static int normalize_feature(int value, int derivation);
 

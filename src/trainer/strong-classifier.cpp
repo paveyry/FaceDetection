@@ -11,6 +11,7 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <boost/filesystem.hpp>
 #include "strong-classifier.h"
+#include "../features/four-rectangles-feature.h"
 
 #define LEARN_PASS (400)
 #define WINDOW_WIDTH (24)
@@ -43,11 +44,11 @@ namespace violajones
       fs << classif.alpha_ << " "
       << classif.threshold_ << " "
       << classif.parity_ << " "
-      << classif.feature_.get_type() << " "
-      << classif.feature_.frame.top_left.x << " "
-      << classif.feature_.frame.top_left.y << " "
-      << classif.feature_.frame.width << " "
-      << classif.feature_.frame.height << std::endl;
+      << classif.feature_->get_type() << " "
+      << classif.feature_->frame.top_left.x << " "
+      << classif.feature_->frame.top_left.y << " "
+      << classif.feature_->frame.width << " "
+      << classif.feature_->frame.height << std::endl;
     fs.close();
   }
 
@@ -67,9 +68,9 @@ namespace violajones
                 >> featurewidth >> featureheight;
               Rectangle feature_frame(Point(featurex, featurey), featurewidth, featureheight);
               std::shared_ptr<Feature> feature;
-              /*
               if (feature_type == "FourRectanglesFeature")
-                feature = std::make_shared<FourRectangleFeature>(feature_frame);
+                feature = std::make_shared<FourRectanglesFeature>(feature_frame);
+                /*
               else if (feature_type == "ThreeHorizontalRectanglesFeature")
                 feature = std::make_shared<ThreeHorizontalRectanglesFeature>(feature_frame);
               else if (feature_type == "ThreeVerticalRectanglesFeature")
@@ -80,7 +81,7 @@ namespace violajones
                 feature = std::make_shared<TwoVerticalRectanglesFeature>(feature_frame);
               else
                 feature = std::make_shared<TwoVerticalRectanglesFeature>(feature_frame);
-                */
+                 */
               return WeakClassifier(alpha, threshold, parity, feature);
             };
     std::ifstream infile(path);

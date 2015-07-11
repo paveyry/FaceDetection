@@ -17,7 +17,7 @@ namespace violajones
 
     virtual int compute_value(IntegralImage image) override;
 
-    virtual std::string to_string() override;
+    virtual std::string get_type() override;
 
   public:
     const int min_width = 2;
