@@ -50,6 +50,6 @@ namespace violajones
     double global_alpha;
 
   };
-};
+}
 
 #endif /* !FACE_RECOG_STRONG_CLASSIFIER_H */

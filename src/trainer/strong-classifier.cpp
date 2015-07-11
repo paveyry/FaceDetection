@@ -9,6 +9,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <boost/filesystem.hpp>
 #include "strong-classifier.h"
 
 #define LEARN_PASS (400)
@@ -193,18 +194,25 @@ namespace violajones
   {
     sf::Image sfimage;
     sfimage.loadFromFile(imagepath);
-    sf::Texture texture;
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
-    sprite.scale(WINDOW_WIDTH / sfimage.getSize().x, WINDOW_HEIGHT / sfimage.getSize().y);
-    sf::RenderTexture t;
-    t.draw(sprite);
-    //TO RESCALE
+    if (sfimage.getSize().x != WINDOW_WIDTH || sfimage.getSize().y != WINDOW_HEIGHT)
+    {
+      std::cerr << "Invalid test image size" << std::endl;
+      exit(1);
+    }
+    return GreyImage(sfimage);
   }
 
   std::vector<GreyImage> StrongClassifier::load_images(std::string dir)
   {
-    return std::vector<bool, _Alloc>();
+    namespace fs = boost::filesystem;
+    fs::path path(dir);
+    fs::directory_iterator end_itr;
+    std::vector<GreyImage> images;
+    if (fs::exists(path) && fs::is_directory(path))
+      for (fs::directory_iterator iter(path); iter != end_itr; ++iter)
+        if (fs::is_regular_file(iter->status()))
+          images.push_back(load_images(iter->path().string()));
+    return images;
   }
 
 };
