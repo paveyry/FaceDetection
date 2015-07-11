@@ -7,6 +7,7 @@
 
 #include <bits/stl_bvector.h>
 #include "test-image.h"
+#include "../features/feature.h"
 
 namespace violajones
 {
@@ -18,9 +19,9 @@ namespace violajones
             : test_index(test_index_), value(value)
     { }
 
-    static std::vector<FeatureValue> compute_all_values(std::vector<TestImage>& tests, Feature feature);
+    static std::vector<FeatureValue> compute_all_values(std::vector<TestImage>& tests, Feature& feature);
 
-    static std::vector<FeatureValue> compute_all_values_sorted(std::vector<TestImage>& tests, Feature feature);
+    static std::vector<FeatureValue> compute_all_values_sorted(std::vector<TestImage>& tests, Feature& feature);
 
     bool operator==(const FeatureValue& other);
 

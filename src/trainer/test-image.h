@@ -14,7 +14,7 @@ namespace violajones
   {
   public:
     TestImage(GreyImage& gimage, const double weight, const bool valid)
-            : image{IntegralImage(gimage)}, valid(valid), weight(weight)
+            : image(IntegralImage(gimage)), valid(valid), weight(weight)
     {
       //image = IntegralImage(gimage);
       derivation = image.get_deviation();

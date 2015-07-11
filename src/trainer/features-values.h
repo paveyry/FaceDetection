@@ -8,19 +8,19 @@
 #include <vector>
 #include "test-image.h"
 #include "feature-value.h"
+#include "../features/feature.h"
 
 namespace violajones
 {
   class FeatureValues
   {
   public:
-    FeatureValues(const Feature& pfeature,
-                  const std::vector<FeatureValue>& pvalues)
-            : feature{pfeature}, values{pvalues}
+    FeatureValues(Feature& pfeature, const std::vector<FeatureValue>& pvalues)
+            : feature(pfeature), values{pvalues}
     { }
 
   public:
-    Feature feature;
+    Feature& feature;
     std::vector<FeatureValue> values;
   };
 }

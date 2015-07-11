@@ -10,6 +10,7 @@
 #include "rectangle.h"
 
 #include "../image/integral-image.h"
+#include "../features/feature.h"
 
 namespace violajones
 {

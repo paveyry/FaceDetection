@@ -47,7 +47,7 @@ namespace violajones
     static std::vector<GreyImage> load_images(std::string dir);
 
   public:
-    const std::vector<WeakClassifier> classifiers;
+    std::vector<WeakClassifier> classifiers;
     double global_alpha;
 
   };

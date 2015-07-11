@@ -53,7 +53,7 @@ namespace violajones
 
   StrongClassifier StrongClassifier::load_from_file(std::string path)
   {
-    std::function<WeakClassifier(std::string)> restore_classifier =
+    std::function<WeakClassifier(std::istringstream&)> restore_classifier =
             [](std::istringstream& s) {
               long alpha;
               int threshold;
@@ -66,19 +66,21 @@ namespace violajones
               s >> alpha >> threshold >> parity >> feature_type >> featurex >> featurey
                 >> featurewidth >> featureheight;
               Rectangle feature_frame(Point(featurex, featurey), featurewidth, featureheight);
-              Feature feature;
+              std::shared_ptr<Feature> feature;
+              /*
               if (feature_type == "FourRectanglesFeature")
-                feature = FourRectangleFeature(feature_frame);
+                feature = std::make_shared<FourRectangleFeature>(feature_frame);
               else if (feature_type == "ThreeHorizontalRectanglesFeature")
-                feature = ThreeHorizontalRectanglesFeature(feature_frame);
+                feature = std::make_shared<ThreeHorizontalRectanglesFeature>(feature_frame);
               else if (feature_type == "ThreeVerticalRectanglesFeature")
-                feature = ThreeVerticalRectanglesFeature(feature_frame);
+                feature = std::make_shared<ThreeVerticalRectanglesFeature>(feature_frame);
               else if (feature_type == "TwoHorizontalRectanglesFeature")
-                feature = TwoHorizontalRectanglesFeature(feature_frame);
+                feature = std::make_shared<TwoHorizontalRectanglesFeature>(feature_frame);
               else if (feature_type == "TwoVerticalRectanglesFeature")
-                feature = TwoVerticalRectanglesFeature(feature_frame);
+                feature = std::make_shared<TwoVerticalRectanglesFeature>(feature_frame);
               else
-                feature = TwoVerticalRectanglesFeature(feature_frame);
+                feature = std::make_shared<TwoVerticalRectanglesFeature>(feature_frame);
+                */
               return WeakClassifier(alpha, threshold, parity, feature);
             };
     std::ifstream infile(path);
@@ -103,7 +105,7 @@ namespace violajones
 
     unsigned long ncached_features;
     for (FeatureValues& ftvalues : features_values)
-      if (ftvalues.values.size)
+      if (ftvalues.values.size())
         ++ncached_features;
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> diff = end - start;
@@ -120,7 +122,7 @@ namespace violajones
       double weightsum = std::accumulate(tests.begin(), tests.end(), 0.0,
                                          [](double acc, TestImage& t){ return t.weight + acc; });
       double validweight = 0.0;
-      for (auto i = 0; i < tests.size(); ++i)
+      for (size_t i = 0; i < tests.size(); ++i)
       {
         tests[i].weight = tests[i].weight / weightsum;
         if (tests[i].valid)
@@ -129,7 +131,7 @@ namespace violajones
       TestWeakClassifier best(features_values[0], 0, 1, std::numeric_limits<double>::max());
       // TO PARALLELISE
       std::for_each(features_values.begin(), features_values.end(),
-                    [&best](FeatureValues& fv){
+                    [&best, &validweight](FeatureValues& fv){
                       auto new_classifier = TestWeakClassifier.train(tests, validweight, fv);
                       if (best.errors > new_classifier.errors)
                         best = new_classifier;
@@ -137,7 +139,7 @@ namespace violajones
 
       end = std::chrono::steady_clock::now();
       diff = end - start;
-      std::cout << "New weak classifier selected in " << diff << " seconds (error score : " << best.errors << "\n"
+      std::cout << "New weak classifier selected in " << diff.count() << " seconds (error score : " << best.errors << "\n"
               << "X: " << best.feature.feature.frame.top_left.x << " Y: " << best.feature.feature.frame.top_left.y
               << " - Width: " << best.feature.feature.frame.width << " Height: " << best.feature.feature.frame.height
               << std::endl;
@@ -175,7 +177,7 @@ namespace violajones
     for (auto i = good.size(); i < good.size() + bad.size(); ++i)
       tests[i] = TestImage(bad[i - good.size()], badweight, false);
     auto features_values = compute_features_values(tests);
-    return std::pair(tests, features_values);
+    return std::pair<std::vector<TestImage>, std::vector<FeatureValues> >(tests, features_values);
   }
 
   std::vector<FeatureValues> StrongClassifier::compute_features_values(std::vector<TestImage> tests)

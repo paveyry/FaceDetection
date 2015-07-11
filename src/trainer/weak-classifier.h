@@ -7,6 +7,7 @@
 
 #include "../image/integral-image.h"
 #include "../tools/window.h"
+#include "../features/feature.h"
 
 namespace violajones
 {
@@ -14,19 +15,19 @@ namespace violajones
   {
   public:
 
-    WeakClassifier(double alpha, int threshold, signed char parity, const Feature feature)
-            : alpha_{alpha}, threshold_{threshold}, parity_{parity}, feature_{feature}
+    WeakClassifier(double alpha, int threshold, signed char parity, std::shared_ptr<Feature> feature)
+            : alpha_{alpha}, threshold_{threshold}, parity_{parity}, feature_(feature)
     { }
 
     bool check(Window win, IntegralImage image);
 
-    double get_value(Window win, IntegralImage image) const;
+    double get_value(Window win, IntegralImage image);
 
   public:
     double alpha_;
     int threshold_;
     char parity_;
-    Feature feature_;
+    std::shared_ptr<Feature> feature_;
   };
 }
 
