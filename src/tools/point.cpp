@@ -3,7 +3,7 @@
 //
 
 #include <string>
-#include "Point.h"
+#include "point.h"
 
 namespace violajones
 {
