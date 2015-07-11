@@ -18,7 +18,7 @@ namespace violajones
     const IntegralImage image;
     const bool valid;
     const int derivation;
-    const double weight;
+    double weight;
   };
 };
 

@@ -138,13 +138,15 @@ namespace violajones
         beta = 1 / 100000000;
 
       for (FeatureValue& featurevalue : best.feature.values)
-      {
         if (best.check(featurevalue.value) == tests[featurevalue.test_index].valid)
           tests[featurevalue.test_index].weight *= beta;
-      }
+
+      auto alpha = std::log(1.0 / beta);
+      classifiers[ipass - 1] = best.get_classifier(alpha);
+      ++ipass;
     }
-
-
+    std::cout << "Training finished" <<std::endl;
+    return StrongClassifier(classifiers);
   }
 
   std::pair<std::vector<TestImage>,
