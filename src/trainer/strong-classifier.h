@@ -19,17 +19,24 @@ namespace violajones
   {
   public:
     StrongClassifier(std::vector<WeakClassifier> classifiers);
+
     bool check(Window win, IntegralImage image);
+
     void save(std::string path);
+
     static StrongClassifier load_from_file(std::string path);
+
     static StrongClassifier train(std::string tests_dir);
 
 
   private:
     static std::pair<std::vector<TestImage>,
-                     std::vector<FeatureValue> > load_tests_set(std::string tests_dir);
+            std::vector<FeatureValue> > load_tests_set(std::string tests_dir);
+
     static std::vector<FeatureValue> compute_features_values(std::vector<TestImage> tests);
+
     static GreyImage load_image(std::string imagepath);
+
     static std::vector<GreyImage> load_images(std::string dir);
 
   public:

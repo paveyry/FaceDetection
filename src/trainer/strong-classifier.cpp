@@ -15,8 +15,7 @@ namespace violajones
     global_alpha = galpha;
   }
 
-  bool StrongClassifier::check(::violajones::StrongClassifier::Window win,
-                               ::violajones::StrongClassifier::IntegralImage image)
+  bool StrongClassifier::check(Window win, IntegralImage image)
   {
     double sumvalues = 0;
     for (auto& weakclass : classifiers)
@@ -29,20 +28,53 @@ namespace violajones
     std::fstream fs;
     fs.open(path);
     for (auto& classif : classifiers)
-      fs << classif.alpha_ << ";"
-      << classif.threshold_ << ";"
-      << classif.parity_ << ";"
-      << classif.feature_.get_type() << ";"
-      << classif.feature_.frame.top_left.x << ";"
-      << classif.feature_.frame.top_left.y << ";"
-      <<classif.feature_.frame.width << ";"
+      fs << classif.alpha_ << " "
+      << classif.threshold_ << " "
+      << classif.parity_ << " "
+      << classif.feature_.get_type() << " "
+      << classif.feature_.frame.top_left.x << " "
+      << classif.feature_.frame.top_left.y << " "
+      << classif.feature_.frame.width << " "
       << classif.feature_.frame.height << std::endl;
     fs.close();
   }
 
   StrongClassifier StrongClassifier::load_from_file(std::string path)
   {
-    s
+    std::function<WeakClassifier(std::sring)> restore_classifier =
+            [](std::string s) {
+              long alpha;
+              int threshold;
+              char parity;
+              std::string feature_type;
+              int featurex;
+              int featurey;
+              int featurewidth;
+              int featureheight;
+              s >> alpha >> threshold >> parity >> feature_type >> featurex >> featurey
+                >> featurewidth >> featureheight;
+              Rectangle feature_frame(Point(featureX, featureY), featurewidth, featureheight);
+              Feature feature;
+              if (feature_type == "FourRectanglesFeature")
+                feature = FourRectangleFeature(feature_frame);
+              else if (feature_type == "ThreeHorizontalRectanglesFeature")
+                feature = ThreeHorizontalRectanglesFeature(feature_frame);
+              else if (feature_type == "ThreeVerticalRectanglesFeature")
+                feature = ThreeVerticalRectanglesFeature(feature_frame);
+              else if (feature_type == "TwoHorizontalRectanglesFeature")
+                feature = TwoHorizontalRectanglesFeature(feature_frame);
+              else if (feature_type == "TwoVerticalRectanglesFeature")
+                feature = TwoVerticalRectanglesFeature(feature_frame);
+              else
+                feature = TwoVerticalRectanglesFeature(feature_frame);
+              return WeakClassifier(alpha, threshold, parity, feature);
+            };
+    std::ifstream infile(path);
+    std::string line;
+    std::vector<WeakClassifier> classifiers;
+    while (std::getline(infile, line))
+      classifiers.push_back(restore_classifier(line));
+    return StrongClassifier(classifiers);
   }
 
   StrongClassifier StrongClassifier::train(std::string tests_dir)
