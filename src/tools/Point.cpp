@@ -2,7 +2,7 @@
 // Created by hasb4k on 7/11/15.
 //
 
-#include <bits/basic_string.h>
+#include <string>
 #include "Point.h"
 
 namespace violajones
