@@ -25,7 +25,7 @@ namespace violajones
     height = size.y;
 
     for (int x = 0; x < width; ++x)
-      for (int y = 0; y < width; ++y)
+      for (int y = 0; y < height; ++y)
       {
         auto color = pixels->getPixel(x, y);
         sf::Uint8 grey = (sf::Uint8) (((int) color.r + color.g + color.b) / 3);
