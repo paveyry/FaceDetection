@@ -10,7 +10,7 @@
 # include <vector>
 
 # include "grey-image.h"
-#include "../tools/Point.h"
+# include "point.h"
 
 namespace violajones
 {
