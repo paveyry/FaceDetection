@@ -10,11 +10,10 @@
 
 namespace violajones
 {
-  class FeatureValues
+  class FeaturesValues
   {
   public:
-
-    FeatureValues(const Feature& feature,
+    FeaturesValues(const Feature& feature,
                   const std::vector<FeatureValue>& values)
             : feature(feature), values(values)
     { }

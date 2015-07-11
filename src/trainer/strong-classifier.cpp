@@ -2,7 +2,11 @@
 // Created by veyry_p on 7/11/15.
 //
 
+#include <iostream>
+#include <chrono>
+#include <numeric>
 #include "strong-classifier.h"
+#define LEARN_PASS (400)
 
 namespace violajones
 {
@@ -82,19 +86,77 @@ namespace violajones
 
   StrongClassifier StrongClassifier::train(std::string tests_dir)
   {
-    return violajones::StrongClassifier(std::vector<WeakClassifier>());
+    std::cout << "Initializing Trainer ...\n"
+    << "Loading trainer tests ..." << std::endl;
+    auto start = std::chrono::steady_clock::now();
+    auto tests_set = load_tests_set(tests_dir);
+    auto& tests = tests_set.first;
+    auto& features_values = tests_set.second;
+
+    unsigned long ncached_features;
+    for (FeaturesValues& ftvalues : features_values)
+      if (ftvalues.values.size)
+        ++ncached_features;
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> diff = end - start;
+    std::cout << "Tests loaded in " << diff.count() << " seconds ("
+    << ncached_features * 100 / features_values.size()
+    << "% cached)\n Launching training..." << std::endl;
+
+    std::vector<WeakClassifier> classifiers(LEARN_PASS);
+    auto ipass = 1;
+    while (ipass <= LEARN_PASS)
+    {
+      start = std::chrono::steady_clock::now();
+      std::cout << ipass << "/" << LEARN_PASS << "trainer pass..." << std::endl;
+      double weightsum = std::accumulate(tests.begin(), tests.end(), 0.0,
+                                         [](double acc, TestImage& t){ return t.weight + acc; });
+      double validweight = 0.0;
+      for (auto i = 0; i < tests.size(); ++i)
+      {
+        tests[i].weight = tests[i].weight / weightsum;
+        if (tests[i].valid)
+          validweight += tests[i].weight;
+      }
+      TestWeakClassifier best(features_values[0], 0, 1, std::numeric_limits<double>::max());
+      // TO PARALLELISE
+      std::for_each(features_values.begin(), features_values.end(),
+                    [&best](FeaturesValues& fv){
+                      auto new_classifier = TestWeakClassifier.train(tests, validweight, fv);
+                      if (best.errors > new_classifier.errors)
+                        best = new_classifier;
+                    });
+
+      auto end = std::chrono::steady_clock::now();
+      diff = end - start;
+      std::cout << "New weak classifier selected in " << diff << " seconds (error score : " << best.errors << "\n"
+              << "X: " << best.feature.feature.frame.top_left.x << " Y: " << best.feature.feature.frame.top_left.y
+              << " - Width: " << best.feature.feature.frame.width << " Height: " << best.feature.feature.frame.height
+              << std::endl;
+      auto beta = best.errors / (1.0 - best.errors);
+      if (beta < 1 / 100000000)
+        beta = 1 / 100000000;
+
+      for (FeatureValue& featurevalue : best.feature.values)
+      {
+        if (best.check(featurevalue.value) == tests[featurevalue.test_index].valid)
+          tests[featurevalue.test_index].weight *= beta;
+      }
+    }
+
+
   }
 
   std::pair<std::vector<TestImage>,
-          std::vector<FeatureValue> > StrongClassifier::load_tests_set(std::string tests_dir)
+          std::vector<FeaturesValues> > StrongClassifier::load_tests_set(std::string tests_dir)
   {
     return std::pair<vector < TestImage, allocator < TestImage>>, vector < FeatureValue, allocator < FeatureValue >> >
                                                                                          ();
   }
 
-  std::vector<FeatureValue> StrongClassifier::compute_features_values(std::vector<TestImage> tests)
+  std::vector<FeaturesValues> StrongClassifier::compute_features_values(std::vector<TestImage> tests)
   {
-    return std::vector<FeatureValue>();
+    return std::vector<FeaturesValues>();
   }
 
   ::violajones::StrongClassifier::GreyImage StrongClassifier::load_image(std::string imagepath)

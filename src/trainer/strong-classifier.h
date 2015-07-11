@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <functional>
+#include <algorithm>
 #include "weak-classifier.h"
 #include "feature-value.h"
 #include "test-image.h"
@@ -33,9 +34,9 @@ namespace violajones
 
   private:
     static std::pair<std::vector<TestImage>,
-            std::vector<FeatureValue> > load_tests_set(std::string tests_dir);
+            std::vector<FeaturesValues> > load_tests_set(std::string tests_dir);
 
-    static std::vector<FeatureValue> compute_features_values(std::vector<TestImage> tests);
+    static std::vector<FeaturesValues> compute_features_values(std::vector<TestImage> tests);
 
     static GreyImage load_image(std::string imagepath);
 
