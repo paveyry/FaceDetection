@@ -6,6 +6,7 @@
 #define FACERECOG_FEATURES_VALUES_H
 
 #include <vector>
+#include "test-image.h"
 #include "feature-value.h"
 
 namespace violajones
@@ -13,15 +14,15 @@ namespace violajones
   class FeatureValues
   {
   public:
-    FeatureValues(const Feature& feature,
-                  const std::vector<FeatureValue>& values)
-            : feature(feature), values(values)
+    FeatureValues(const Feature& pfeature,
+                  const std::vector<FeatureValue>& pvalues)
+            : feature{pfeature}, values{pvalues}
     { }
 
   public:
     Feature feature;
     std::vector<FeatureValue> values;
   };
-};
+}
 
 #endif /* !FACERECOG_FEATURES_VALUES_H */

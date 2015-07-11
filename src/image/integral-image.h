@@ -5,7 +5,7 @@
 #ifndef FACERECOG_INTEGRAL_IMAGE_H
 # define FACERECOG_INTEGRAL_IMAGE_H
 
-# include <SFML/Graphics.h>
+# include <SFML/Graphics.hpp>
 # include <functional>
 # include <vector>
 
