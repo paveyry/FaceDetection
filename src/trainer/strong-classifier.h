@@ -18,6 +18,7 @@
 #include "features-values.h"
 #include "../image/grey-image.h"
 #include "../image/integral-image.h"
+#include "../tools/window.h"
 
 namespace violajones
 {

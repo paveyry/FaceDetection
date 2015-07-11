@@ -6,6 +6,7 @@
 #define FACERECOG_WEAK_CLASSIFIER_H
 
 #include "../image/integral-image.h"
+#include "../tools/window.h"
 
 namespace violajones
 {

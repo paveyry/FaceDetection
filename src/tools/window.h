@@ -9,7 +9,7 @@
 # include "point.h"
 #include "rectangle.h"
 
-#i nclude "../image/integral-image.h"
+#include "../image/integral-image.h"
 
 namespace violajones
 {
