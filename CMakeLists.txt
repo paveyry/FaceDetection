@@ -3,7 +3,7 @@ project(face-recog)
 set(EXECUTABLE_NAME "face-recog")
 
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -std=c++14 -pedantic -fPIC")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14 -pedantic -fPIC")
 
 # Define sources and executable
 file(GLOB_RECURSE sources_files src/*)
