@@ -21,7 +21,7 @@ namespace violajones
 
     virtual int compute_value(IntegralImage image) = 0;
 
-    virtual std::string to_string();
+    virtual std::string to_string() = 0;
 
     static int normalize_feature(int value, int derivation);
 
@@ -29,7 +29,6 @@ namespace violajones
     Rectangle frame;
 
   };
-
 }
 
 #endif /* !FACERECOG_FEATURES_H */
