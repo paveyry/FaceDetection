@@ -5,6 +5,8 @@
 #ifndef FACERECOG_WEAK_CLASSIFIER_H
 #define FACERECOG_WEAK_CLASSIFIER_H
 
+#include "../image/integral-image.h"
+
 namespace violajones
 {
   class WeakClassifier
@@ -17,13 +19,13 @@ namespace violajones
 
     bool check(Window win, IntegralImage image);
 
-    double get_value(Window win, IntegralImage image);
+    double get_value(Window win, IntegralImage image) const;
 
   public:
-    const double alpha_;
-    const int threshold_;
-    const char parity_;
-    const Feature feature_;
+    double alpha_;
+    int threshold_;
+    char parity_;
+    Feature feature_;
   };
 }
 
