@@ -5,9 +5,15 @@
 #include <iostream>
 #include <chrono>
 #include <numeric>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include "strong-classifier.h"
 
 #define LEARN_PASS (400)
+#define WINDOW_WIDTH (24)
+#define WINDOW_HEIGHT (24)
 
 namespace violajones
 {
@@ -95,7 +101,7 @@ namespace violajones
     auto& features_values = tests_set.second;
 
     unsigned long ncached_features;
-    for (FeaturesValues& ftvalues : features_values)
+    for (FeatureValues& ftvalues : features_values)
       if (ftvalues.values.size)
         ++ncached_features;
     auto end = std::chrono::steady_clock::now();
@@ -122,7 +128,7 @@ namespace violajones
       TestWeakClassifier best(features_values[0], 0, 1, std::numeric_limits<double>::max());
       // TO PARALLELISE
       std::for_each(features_values.begin(), features_values.end(),
-                    [&best](FeaturesValues& fv){
+                    [&best](FeatureValues& fv){
                       auto new_classifier = TestWeakClassifier.train(tests, validweight, fv);
                       if (best.errors > new_classifier.errors)
                         best = new_classifier;
@@ -151,7 +157,7 @@ namespace violajones
   }
 
   std::pair<std::vector<TestImage>,
-            std::vector<FeaturesValues> > StrongClassifier::load_tests_set(std::string tests_dir)
+            std::vector<FeatureValues> > StrongClassifier::load_tests_set(std::string tests_dir)
   {
     std::string gooddir = tests_dir + "/good";
     std::string baddir = tests_dir + "/bad";
@@ -171,14 +177,29 @@ namespace violajones
     return std::pair(tests, features_values);
   }
 
-  std::vector<FeaturesValues> StrongClassifier::compute_features_values(std::vector<TestImage> tests)
+  std::vector<FeatureValues> StrongClassifier::compute_features_values(std::vector<TestImage> tests)
   {
-    return std::vector<FeaturesValues>();
+    std::vector<Feature> features = Window.list_features();
+    std::vector<FeatureValues> features_values(features.size());
+    for (auto i = 0; i < features_values.size(); ++i)
+    {
+      auto values = FeatureValue::compute_all_values_sorted(tests, features[i]);
+      features_values[i] = FeatureValues(features[i], values);
+    }
+    return features_values;
   }
 
   GreyImage StrongClassifier::load_image(std::string imagepath)
   {
-    return nullptr;
+    sf::Image sfimage;
+    sfimage.loadFromFile(imagepath);
+    sf::Texture texture;
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+    sprite.scale(WINDOW_WIDTH / sfimage.getSize().x, WINDOW_HEIGHT / sfimage.getSize().y);
+    sf::RenderTexture t;
+    t.draw(sprite);
+    //TO RESCALE
   }
 
   std::vector<GreyImage> StrongClassifier::load_images(std::string dir)

@@ -16,8 +16,8 @@ public:
           , value(value)
   {}
 
-  std::vector<FeatureValue> compute_all_values(std::vector<TestImage>& tests, Feature feature);
-  std::vector<FeatureValue> compute_all_values_sorted(std::vector<TestImage>& tests, Feature feature);
+  static std::vector<FeatureValue> compute_all_values(std::vector<TestImage>& tests, Feature feature);
+  static std::vector<FeatureValue> compute_all_values_sorted(std::vector<TestImage>& tests, Feature feature);
 
   bool operator==(const FeatureValue& other);
   bool operator!=(const FeatureValue& other);
