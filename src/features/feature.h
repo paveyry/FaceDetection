@@ -5,9 +5,10 @@
 #ifndef FACERECOG_FEATURES_H
 # define FACERECOG_FEATURES_H
 
-#include "../tools/point.h"
-#include "../image/integral-image.h"
-#include "../tools/rectangle.h"
+# include <string>
+# include "../tools/point.h"
+# include "../image/integral-image.h"
+# include "../tools/rectangle.h"
 
 namespace violajones
 {
@@ -19,6 +20,8 @@ namespace violajones
     virtual int compute_value(Point win_top_left, float size_ratio, IntegralImage image) = 0;
 
     virtual int compute_value(IntegralImage image) = 0;
+
+    virtual std::string to_string();
 
     static int normalize_feature(int value, int derivation);
 
