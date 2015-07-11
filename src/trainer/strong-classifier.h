@@ -15,6 +15,7 @@
 #include "feature-value.h"
 #include "test-image.h"
 #include "features-values.h"
+#include "../image/grey-image.h"
 
 namespace violajones
 {

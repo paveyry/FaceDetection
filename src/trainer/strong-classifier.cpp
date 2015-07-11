@@ -6,6 +6,7 @@
 #include <chrono>
 #include <numeric>
 #include "strong-classifier.h"
+
 #define LEARN_PASS (400)
 
 namespace violajones
@@ -127,7 +128,7 @@ namespace violajones
                         best = new_classifier;
                     });
 
-      auto end = std::chrono::steady_clock::now();
+      end = std::chrono::steady_clock::now();
       diff = end - start;
       std::cout << "New weak classifier selected in " << diff << " seconds (error score : " << best.errors << "\n"
               << "X: " << best.feature.feature.frame.top_left.x << " Y: " << best.feature.feature.frame.top_left.y
@@ -150,10 +151,24 @@ namespace violajones
   }
 
   std::pair<std::vector<TestImage>,
-          std::vector<FeaturesValues> > StrongClassifier::load_tests_set(std::string tests_dir)
+            std::vector<FeaturesValues> > StrongClassifier::load_tests_set(std::string tests_dir)
   {
-    return std::pair<vector < TestImage, allocator < TestImage>>, vector < FeatureValue, allocator < FeatureValue >> >
-                                                                                         ();
+    std::string gooddir = tests_dir + "/good";
+    std::string baddir = tests_dir + "/bad";
+    std::vector<GreyImage> good = load_images(gooddir);
+    std::vector<GreyImage> bad = load_images(baddir);
+
+    double goodweight = 1.0 / (2 * good.size());
+    double badweight = 1.0 / (2 * bad.size());
+
+    std::vector<TestImage> tests(good.size() + bad.size());
+    for (auto i = 0; i < good.size(); ++i)
+      tests[i] = TestImage(good[i], goodweight, true);
+
+    for (auto i = good.size(); i < good.size() + bad.size(); ++i)
+      tests[i] = TestImage(bad[i - good.size()], badweight, false);
+    auto features_values = compute_features_values(tests);
+    return std::pair(tests, features_values);
   }
 
   std::vector<FeaturesValues> StrongClassifier::compute_features_values(std::vector<TestImage> tests)
@@ -161,7 +176,7 @@ namespace violajones
     return std::vector<FeaturesValues>();
   }
 
-  ::violajones::StrongClassifier::GreyImage StrongClassifier::load_image(std::string imagepath)
+  GreyImage StrongClassifier::load_image(std::string imagepath)
   {
     return nullptr;
   }

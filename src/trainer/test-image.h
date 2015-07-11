@@ -5,19 +5,24 @@
 #ifndef FACE_RECOG_TEST_IMAGE_H
 #define FACE_RECOG_TEST_IMAGE_H
 
+#include "../image/grey-image.h"
+
 namespace violajones
 {
   class TestImage
   {
   public:
-    TestImage(const IntegralImage& image, const bool valid, const int derivation, const double weight)
-            : image(image), valid(valid), derivation(derivation), weight(weight)
-    { }
+    TestImage(const GreyImage& gimage, const double weight, const bool valid)
+            : valid(valid), weight(weight)
+    {
+      image = IntegralImage(gimage);
+      derivation = image.get_deviation();
+    }
 
   public:
-    const IntegralImage image;
+    IntegralImage image;
     const bool valid;
-    const int derivation;
+    int derivation;
     double weight;
   };
 };
