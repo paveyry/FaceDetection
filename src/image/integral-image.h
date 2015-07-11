@@ -10,6 +10,7 @@
 # include <vector>
 
 # include "grey-image.h"
+#include "../tools/Point.h"
 
 namespace violajones
 {
@@ -29,13 +30,19 @@ namespace violajones
 
     IntegralImage(std::string);
 
+    long get_value(Point point);
+
+    int get_deviation();
+
+  protected:
+    void compute_integral_image();
+
   public:
     GreyImage image;
     std::function<long(byte)> type;
     std::vector<std::vector<long>> table;
     int width;
     int height;
-
 
   };
 }
