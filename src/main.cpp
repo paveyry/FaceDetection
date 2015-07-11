@@ -2,7 +2,7 @@
 // Created by veyry_p on 7/9/15.
 //
 
-#include "features/integral-image.h"
+//#include "features/integral-image.h"
 /*
 int main(void)
 {
