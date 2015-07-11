@@ -11,40 +11,19 @@ namespace violajones
   {
   public:
 
-    WeakClassifier(double alpha_, int threshold_, signed char byte,
-                   long parity_, const Feature& feature_)
-            : alpha_(alpha_), threshold_(threshold_), byte(byte), parity_(parity_), feature_(feature_)
+    WeakClassifier(double alpha, int threshold, signed char parity, const Feature feature)
+            : alpha_{alpha}, threshold_{threshold}, parity_{parity}, feature_{feature}
     { }
 
     bool check(Window win, IntegralImage image);
 
     double get_value(Window win, IntegralImage image);
 
-    double get_alpha() const
-    {
-      return alpha_;
-    }
-
-    int get_threshold() const
-    {
-      return threshold_;
-    }
-
-    char get_parity() const
-    {
-      return parity_;
-    }
-
-    const Feature& get_feature_() const
-    {
-      return feature_;
-    }
-
-  private:
-    double alpha_;
-    int threshold_;
-    char parity_;
-    Feature feature_;
+  public:
+    const double alpha_;
+    const int threshold_;
+    const char parity_;
+    const Feature feature_;
   };
 }
 

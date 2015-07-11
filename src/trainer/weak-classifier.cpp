@@ -4,26 +4,6 @@
 
 #include "weak-classifier.h"
 
-double get_alpha() const
-{
-  return alpha_;
-}
-
-int get_threshold() const
-{
-  return threshold_;
-}
-
-char get_parity() const
-{
-  return parity_;
-}
-
-const Feature& get_feature_() const
-{
-  return feature_;
-}
-
 bool WeakClassifier::check(Window win,
                            IntegralImage image)
 {
@@ -35,5 +15,8 @@ bool WeakClassifier::check(Window win,
 
 double WeakClassifier::get_value(Window win, IntegralImage image)
 {
-  return 0;
+  if (check(win, image))
+    return alpha_;
+  else
+    return 0;
 }
