@@ -11,7 +11,7 @@ namespace violajones
   {
     double galpha = 0;
     for (auto& classifier : classifiers)
-      galpha += classifier.alpha;
+      galpha += classifier.alpha_;
     global_alpha = galpha;
   }
 
@@ -41,8 +41,8 @@ namespace violajones
 
   StrongClassifier StrongClassifier::load_from_file(std::string path)
   {
-    std::function<WeakClassifier(std::sring)> restore_classifier =
-            [](std::string s) {
+    std::function<WeakClassifier(std::string)> restore_classifier =
+            [](std::istringstream& s) {
               long alpha;
               int threshold;
               char parity;
@@ -53,7 +53,7 @@ namespace violajones
               int featureheight;
               s >> alpha >> threshold >> parity >> feature_type >> featurex >> featurey
                 >> featurewidth >> featureheight;
-              Rectangle feature_frame(Point(featureX, featureY), featurewidth, featureheight);
+              Rectangle feature_frame(Point(featurex, featurey), featurewidth, featureheight);
               Feature feature;
               if (feature_type == "FourRectanglesFeature")
                 feature = FourRectangleFeature(feature_frame);
@@ -73,7 +73,10 @@ namespace violajones
     std::string line;
     std::vector<WeakClassifier> classifiers;
     while (std::getline(infile, line))
-      classifiers.push_back(restore_classifier(line));
+    {
+      std::istringstream iss(line);
+      classifiers.push_back(restore_classifier(iss));
+    }
     return StrongClassifier(classifiers);
   }
 

@@ -8,6 +8,8 @@
 #include <tuple>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <functional>
 #include "weak-classifier.h"
 #include "feature-value.h"
 #include "test-image.h"
@@ -41,7 +43,7 @@ namespace violajones
 
   public:
     const std::vector<WeakClassifier> classifiers;
-    const double global_alpha;
+    double global_alpha;
 
   };
 };
