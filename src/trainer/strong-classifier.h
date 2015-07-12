@@ -19,6 +19,7 @@
 #include "../image/grey-image.h"
 #include "../image/integral-image.h"
 #include "../tools/window.h"
+#include "test-weak-classifier.h"
 
 namespace violajones
 {
@@ -47,8 +48,8 @@ namespace violajones
     static std::vector<GreyImage> load_images(std::string dir);
 
   public:
-    std::vector<WeakClassifier> classifiers;
-    double global_alpha;
+    std::vector<WeakClassifier> classifiers_;
+    double global_alpha_;
 
   };
 }

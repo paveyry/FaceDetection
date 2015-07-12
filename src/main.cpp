@@ -2,14 +2,6 @@
 // Created by veyry_p on 7/9/15.
 //
 
-//#include "features/integral-image.h"
-/*
-int main(void)
-{
-  return 0;
-}
- */
-
 #include <SFML/Graphics.hpp>
 
 int main()

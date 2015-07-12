@@ -15,13 +15,13 @@ namespace violajones
   class FeatureValues
   {
   public:
-    FeatureValues(Feature& pfeature, const std::vector<FeatureValue>& pvalues)
-            : feature(pfeature), values{pvalues}
+    FeatureValues(std::shared_ptr<Feature> pfeature, const std::vector<FeatureValue>& pvalues)
+            : feature_(pfeature), values_{pvalues}
     { }
 
   public:
-    Feature& feature;
-    std::vector<FeatureValue> values;
+    std::shared_ptr<Feature> feature_;
+    std::vector<FeatureValue> values_;
   };
 }
 

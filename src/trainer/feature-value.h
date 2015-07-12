@@ -16,7 +16,7 @@ namespace violajones
   public:
 
     FeatureValue(short test_index_, int value)
-            : test_index(test_index_), value(value)
+            : test_index_(test_index_), value_(value)
     { }
 
     static std::vector<FeatureValue> compute_all_values(std::vector<TestImage>& tests, Feature& feature);
@@ -36,8 +36,8 @@ namespace violajones
     bool operator>(const FeatureValue& other);
 
   public:
-    short test_index;
-    int value;
+    short test_index_;
+    int value_;
   };
 }
 

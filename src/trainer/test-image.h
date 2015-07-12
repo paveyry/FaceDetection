@@ -14,17 +14,17 @@ namespace violajones
   {
   public:
     TestImage(GreyImage& gimage, const double weight, const bool valid)
-            : image(IntegralImage(gimage)), valid(valid), weight(weight)
+            : image_(IntegralImage(gimage)), valid_(valid), weight_(weight)
     {
-      //image = IntegralImage(gimage);
-      derivation = image.get_deviation();
+      //image_ = IntegralImage(gimage);
+      derivation_ = image_.get_deviation();
     }
 
   public:
-    IntegralImage image;
-    const bool valid;
-    int derivation;
-    double weight;
+    IntegralImage image_;
+    const bool valid_;
+    int derivation_;
+    double weight_;
   };
 }
 
