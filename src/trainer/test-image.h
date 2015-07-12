@@ -14,14 +14,14 @@ namespace violajones
   {
   public:
     TestImage(GreyImage& gimage, const double weight, const bool valid)
-            : image_(IntegralImage(gimage)), valid_(valid), weight_(weight)
+            : image_(std::make_shared<IntegralImage>(IntegralImage(gimage))), valid_(valid), weight_(weight)
     {
       //image_ = IntegralImage(gimage);
-      derivation_ = image_.get_deviation();
+      derivation_ = image_->get_deviation();
     }
 
   public:
-    IntegralImage image_;
+    std::shared_ptr<IntegralImage> image_;
     const bool valid_;
     int derivation_;
     double weight_;
