@@ -7,10 +7,12 @@
 
 # include <vector>
 # include "point.h"
-#include "rectangle.h"
+# include "rectangle.h"
+# include "../image/integral-image.h"
+# include "../features/feature.h"
 
-#include "../image/integral-image.h"
-#include "../features/feature.h"
+# define WINDOW_WIDTH 24
+# define WINDOW_HEIGHT 24
 
 namespace violajones
 {
@@ -36,7 +38,6 @@ namespace violajones
 
   public:
     Point top_left;
-    float ratio;
     float size_ratio;
     int deviation;
     int width;
