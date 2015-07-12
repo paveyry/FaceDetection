@@ -20,9 +20,9 @@ namespace violajones
             : alpha_{alpha}, threshold_{threshold}, parity_{parity}, feature_(feature)
     { }
 
-    bool check(Window win, IntegralImage image);
+    bool check(Window win, std::shared_ptr<IntegralImage> image);
 
-    double get_value(Window win, IntegralImage image);
+    double get_value(Window win, std::shared_ptr<IntegralImage> image);
 
   public:
     double alpha_;

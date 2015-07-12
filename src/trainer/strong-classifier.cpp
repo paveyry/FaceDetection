@@ -26,7 +26,7 @@ namespace violajones
     global_alpha_ = galpha;
   }
 
-  bool StrongClassifier::check(Window win, IntegralImage image)
+  bool StrongClassifier::check(Window win, std::shared_ptr<IntegralImage> image)
   {
     double sumvalues = 0;
     for (auto& weakclass : classifiers_)

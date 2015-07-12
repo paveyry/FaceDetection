@@ -28,7 +28,7 @@ namespace violajones
   public:
     StrongClassifier(std::vector<WeakClassifier> classifiers);
 
-    bool check(Window win, IntegralImage image);
+    bool check(Window win, std::shared_ptr<IntegralImage> image);
 
     void save(std::string path);
 
