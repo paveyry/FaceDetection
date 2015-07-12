@@ -9,10 +9,10 @@
 
 namespace violajones
 {
-  class ThreeVerticalRectanglesFeature : public Feature
+  class TwoHorizontalRectanglesFeature : public Feature
   {
   public:
-    ThreeVerticalRectanglesFeature(Rectangle frame);
+    TwoHorizontalRectanglesFeature(Rectangle frame);
 
     virtual int compute_value(Point win_top_left, float size_ratio, IntegralImage image) override;
 
@@ -21,8 +21,8 @@ namespace violajones
     virtual std::string get_type() override;
 
   public:
-    const int min_width = 1;
-    const int min_height = 3;
+    const int min_width = 2;
+    const int min_height = 1;
   };
 }
 

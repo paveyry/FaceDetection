@@ -6,16 +6,16 @@
 
 namespace violajones
 {
-  ThreeVerticalRectanglesFeature::ThreeVerticalRectanglesFeature(Rectangle f)
+  TwoHorizontalRectanglesFeature::TwoHorizontalRectanglesFeature(Rectangle f)
           : Feature(f)
   { }
 
-  int ThreeVerticalRectanglesFeature::compute_value(Point win_top_left, float size_ratio, IntegralImage image)
+  int TwoHorizontalRectanglesFeature::compute_value(Point win_top_left, float size_ratio, IntegralImage image)
   {
     Rectangle scaled_frame = frame.scale(size_ratio);
     Point top_left = scaled_frame.top_left.nested_point(win_top_left);
     int rects_width = scaled_frame.width / 2;
-    int rects_height = scaled_frame.height / 1;
+    int rects_height = scaled_frame.height;
 
     auto coords_a = top_left;
     auto coords_b = coords_a.translate(rects_width, 0);
@@ -38,13 +38,13 @@ namespace violajones
     return (int) (sum_r1 - sum_r2);
   }
 
-  int ThreeVerticalRectanglesFeature::compute_value(IntegralImage image)
+  int TwoHorizontalRectanglesFeature::compute_value(IntegralImage image)
   {
     return compute_value(Point{0, 0}, 1, image);
   }
 
-  std::string ThreeVerticalRectanglesFeature::get_type()
+  std::string TwoHorizontalRectanglesFeature::get_type()
   {
-    return "ThreeVerticalRectanglesFeature";
+    return "TwoHorizontalRectanglesFeature";
   }
 }
