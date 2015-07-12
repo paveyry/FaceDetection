@@ -81,6 +81,7 @@ namespace violajones
         }
       }
 
+    return windows;
   }
 
   std::vector<std::shared_ptr<Feature>> Window::list_features()
