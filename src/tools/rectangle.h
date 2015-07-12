@@ -6,6 +6,7 @@
 # define FACE_RECOG_RECTANGLE_H
 
 # include <SFML/Graphics/Image.hpp>
+#include <memory>
 # include <string>
 # include "point.h"
 
@@ -20,7 +21,7 @@ namespace violajones
 
     Rectangle scale(float ratio);
 
-    void draw(sf::Image image);
+    void draw(std::shared_ptr<sf::Image> image);
 
     std::string to_string();
 

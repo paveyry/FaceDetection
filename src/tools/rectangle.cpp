@@ -24,9 +24,14 @@ namespace violajones
                      (int)(height * ratio)};
   }
 
-  void Rectangle::draw(sf::Image image)
+  void Rectangle::draw(std::shared_ptr<sf::Image> image)
   {
-    /* FIXME */
+    for (auto x = top_left.x; x < top_left.x + width; ++x)
+      for (auto y = top_left.y; y < top_left.y + height; ++y)
+      {
+        sf::Color color = image->getPixel(x, y);
+        image->setPixel(x, y, sf::Color{color.r, color.g, 255});
+      }
   }
 
   std::string Rectangle::to_string()
