@@ -54,18 +54,21 @@ namespace violajones
 
   void IntegralImage::compute_integral_image()
   {
+    table.resize(width);
+    for (int x = 0; x < height; ++x)
+      table[x].resize(height);
+
     table[0][0] = type(table[0][0]);
     for (int x = 1; x < width; ++x)
       table[x][0] = table[x - 1][0] + type(image.pixels->getPixel(x, 0).r);
 
-    for (int y = 1; y < width; ++y)
+    for (int y = 1; y < height; ++y)
       table[0][y] = table[0][y - 1] + type(image.pixels->getPixel(0, y).r);
 
     for (int x = 1; x < width; ++x)
-      for (int y = 1; y < width; ++y)
+      for (int y = 1; y < height; ++y)
         table[x][y] = table[x][y - 1] + table[x - 1][y] +
                 type(image.pixels->getPixel(x, y).r - table[x - 1][y - 1]);
-
   }
 
 
