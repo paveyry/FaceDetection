@@ -36,7 +36,7 @@ namespace violajones
   {
     if (point.x == 0 || point.y == 0)
       return 0;
-    return table[point.y - 1][point.x - 1];
+    return table[point.x - 1][point.y - 1];
   }
 
   int IntegralImage::get_deviation()

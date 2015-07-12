@@ -10,10 +10,14 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include "strong-classifier.h"
 #include "../features/four-rectangles-feature.h"
 #include "../features/three-horizontal-rectangles-feature.h"
 #include "../config.h"
+#include "../features/two-vertical-rectangles-feature.h"
+#include "../features/two-horizontal-rectangles-feature.h"
+#include "../features/three-vertical-rectangles-feature.h"
 
 namespace violajones
 {
@@ -52,33 +56,33 @@ namespace violajones
 
   StrongClassifier StrongClassifier::load_from_file(std::string path)
   {
-    std::function<WeakClassifier(std::istringstream&)> restore_classifier =
-            [](std::istringstream& s) {
-              long alpha;
-              int threshold;
-              char parity;
-              std::string feature_type;
-              int featurex;
-              int featurey;
-              int featurewidth;
-              int featureheight;
-              s >> alpha >> threshold >> parity >> feature_type >> featurex >> featurey
-                >> featurewidth >> featureheight;
+    std::function<WeakClassifier(std::string&)> restore_classifier =
+            [](std::string& s) {
+              std::vector<std::string> tokens;
+              boost::split(tokens, s, boost::is_any_of(" ;"));
+              double alpha = std::stod(tokens[0]);
+              int threshold = std::stoi(tokens[1]);
+              char parity = (char)std::stoi(tokens[2]);
+              std::string feature_type = tokens[3];
+              int featurex = std::stoi(tokens[4]);
+              int featurey = std::stoi(tokens[5]);
+              int featurewidth = std::stoi(tokens[6]);
+              int featureheight = std::stoi(tokens[7]);
               Rectangle feature_frame(Point(featurex, featurey), featurewidth, featureheight);
               if (feature_type == "FourRectanglesFeature")
-              {
                 return WeakClassifier(alpha, threshold, parity, std::make_shared<FourRectanglesFeature>(feature_frame));
-              }
               else if (feature_type == "ThreeHorizontalRectanglesFeature")
-                return WeakClassifier(alpha, threshold, parity, std::make_shared<ThreeHorizontalRectanglesFeature>(feature_frame));
-              /*
-            else if (feature_type == "ThreeVerticalRectanglesFeature")
-              return WeakClassifier(alpha, threshold, parity, std::make_shared<ThreeVerticalRectanglesFeature>(feature_frame));
-            else if (feature_type == "TwoHorizontalRectanglesFeature")
-              return WeakClassifier(alpha, threshold, parity, std::make_shared<TwoHorizontalRectanglesFeature>(feature_frame));
-            else if (feature_type == "TwoVerticalRectanglesFeature")
-              return WeakClassifier(alpha, threshold, parity, std::make_shared<TwoVerticalRectanglesFeature>(feature_frame));
-               */
+                return WeakClassifier(alpha, threshold, parity,
+                                      std::make_shared<ThreeHorizontalRectanglesFeature>(feature_frame));
+              else if (feature_type == "ThreeVerticalRectanglesFeature")
+                return WeakClassifier(alpha, threshold, parity,
+                                      std::make_shared<ThreeVerticalRectanglesFeature>(feature_frame));
+              else if (feature_type == "TwoHorizontalRectanglesFeature")
+                return WeakClassifier(alpha, threshold, parity,
+                                      std::make_shared<TwoHorizontalRectanglesFeature>(feature_frame));
+              else if (feature_type == "TwoVerticalRectanglesFeature")
+                return WeakClassifier(alpha, threshold, parity,
+                                      std::make_shared<TwoVerticalRectanglesFeature>(feature_frame));
               return WeakClassifier(alpha, threshold, parity, std::make_shared<FourRectanglesFeature>(feature_frame));
             };
     std::ifstream infile(path);
@@ -86,8 +90,7 @@ namespace violajones
     std::vector<WeakClassifier> classifiers;
     while (std::getline(infile, line))
     {
-      std::istringstream iss(line);
-      classifiers.push_back(restore_classifier(iss));
+      classifiers.push_back(restore_classifier(line));
     }
     return StrongClassifier(classifiers);
   }
@@ -118,7 +121,7 @@ namespace violajones
       start = std::chrono::steady_clock::now();
       std::cout << ipass << "/" << LEARN_PASS << "trainer pass..." << std::endl;
       double weightsum = std::accumulate(tests.begin(), tests.end(), 0.0,
-                                         [](double acc, TestImage& t){ return t.weight_ + acc; });
+                                         [](double acc, TestImage& t) { return t.weight_ + acc; });
       double validweight = 0.0;
       for (size_t i = 0; i < tests.size(); ++i)
       {
@@ -129,7 +132,7 @@ namespace violajones
       TestWeakClassifier best(features_values[0], 0, 1, std::numeric_limits<double>::max());
       // TO PARALLELISE
       std::for_each(features_values.begin(), features_values.end(),
-                    [&](FeatureValues& fv){
+                    [&](FeatureValues& fv) {
                       auto new_classifier = TestWeakClassifier::train(tests, validweight, fv);
                       if (best.errors_ > new_classifier.errors_)
                         best = new_classifier;
@@ -138,11 +141,11 @@ namespace violajones
       end = std::chrono::steady_clock::now();
       diff = end - start;
       std::cout << "New weak classifier selected in " << diff.count() << " seconds (error score : "
-              << best.errors_ << "\n"
-              << "X: " << best.feature_.feature_->frame.top_left.x << " Y: " << best.feature_.feature_->frame.top_left.y
-              << " - Width: " << best.feature_.feature_->frame.width << " Height: "
-              << best.feature_.feature_->frame.height
-              << std::endl;
+      << best.errors_ << "\n"
+      << "X: " << best.feature_.feature_->frame.top_left.x << " Y: " << best.feature_.feature_->frame.top_left.y
+      << " - Width: " << best.feature_.feature_->frame.width << " Height: "
+      << best.feature_.feature_->frame.height
+      << std::endl;
       auto beta = best.errors_ / (1.0 - best.errors_);
       if (beta < 1 / 100000000)
         beta = 1 / 100000000;
@@ -155,12 +158,12 @@ namespace violajones
       classifiers.push_back(best.get_classifier(alpha));
       ++ipass;
     }
-    std::cout << "Training finished" <<std::endl;
+    std::cout << "Training finished" << std::endl;
     return StrongClassifier(classifiers);
   }
 
   std::pair<std::vector<TestImage>,
-            std::vector<FeatureValues> > StrongClassifier::load_tests_set(std::string tests_dir)
+          std::vector<FeatureValues> > StrongClassifier::load_tests_set(std::string tests_dir)
   {
     std::string gooddir = tests_dir + "/good";
     std::string baddir = tests_dir + "/bad";
