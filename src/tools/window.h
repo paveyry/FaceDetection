@@ -30,7 +30,7 @@ namespace violajones
 
     static std::vector<Rectangle> list_features_positions(int min_width, int min_height);
 
-    static std::vector<std::shared_ptr<Feature> > list_features();
+    static std::vector<std::shared_ptr<Feature>> list_features();
 
 
   private:

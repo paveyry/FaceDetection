@@ -3,7 +3,11 @@
 //
 
 #include "window.h"
-
+#include "../features/two-horizontal-rectangles-feature.h"
+#include "../features/two-vertical-rectangles-feature.h"
+#include "../features/three-horizontal-rectangles-feature.h"
+#include "../features/three-vertical-rectangles-feature.h"
+#include "../features/four-rectangles-feature.h"
 namespace violajones
 {
   Window::Window(Point top, float r, IntegralImage image, IntegralImage squared_image)
@@ -49,4 +53,22 @@ namespace violajones
     return Rectangle{top_left, width, height};
   }
 
+  std::vector<std::shared_ptr<Feature>> Window::list_features()
+  {
+    std::vector<std::shared_ptr<Feature>> features = TwoHorizontalRectanglesFeature::list_features();
+
+    std::vector<std::shared_ptr<Feature>> tmp = TwoVerticalRectanglesFeature::list_features();
+    features.insert(features.end(), tmp.begin(), tmp.end());
+
+    tmp = ThreeHorizontalRectanglesFeature::list_features();
+    features.insert(features.end(), tmp.begin(), tmp.end());
+
+    tmp = ThreeVerticalRectanglesFeature::list_features();
+    features.insert(features.end(), tmp.begin(), tmp.end());
+
+    tmp = FourRectanglesFeature::list_features();
+    features.insert(features.end(), tmp.begin(), tmp.end());
+
+    return features;
+  }
 }
