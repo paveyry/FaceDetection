@@ -20,13 +20,13 @@ namespace violajones
   class Window
   {
   public:
-    Window(Point top, float ratio, IntegralImage image, IntegralImage squared_image);
+    Window(Point top, float ratio, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image);
 
-    Window(Point top, IntegralImage image, IntegralImage squared_image);
+    Window(Point top, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image);
 
     Rectangle to_rectangle();
 
-    static std::vector<Window> list_windows(IntegralImage image, IntegralImage squared_image);
+    static std::vector<Window> list_windows(std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image);
 
     static std::vector<Rectangle> list_features_positions(int min_width, int min_height);
 
@@ -34,7 +34,7 @@ namespace violajones
 
 
   private:
-    int get_deviation(IntegralImage image, IntegralImage squared_image);
+    int get_deviation(std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image);
 
 
   public:

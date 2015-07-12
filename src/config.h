@@ -5,8 +5,17 @@
 #ifndef FACE_RECOG_CONFIG_H
 # define FACE_RECOG_CONFIG_H
 
-# define LEARN_PASS 400
 # define WINDOW_WIDTH 24
 # define WINDOW_HEIGHT 24
+
+# define WINDOW_SCALE (1.25)
+
+# define WINDOW_DX 1
+# define WINDOW_DY 1
+
+# define FEATURE_DX 1
+# define FEATURE_DY 1
+
+# define LEARN_PASS 400
 
 #endif //FACE_RECOG_CONFIG_H
