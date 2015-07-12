@@ -20,9 +20,9 @@ namespace violajones
   public:
     virtual ~Feature() = default;
 
-    virtual int compute_value(Point win_top_left, float size_ratio, IntegralImage image) = 0;
+    virtual int compute_value(Point win_top_left, float size_ratio, std::shared_ptr<IntegralImage> image) = 0;
 
-    virtual int compute_value(IntegralImage image) = 0;
+    virtual int compute_value(std::shared_ptr<IntegralImage> image) = 0;
 
     virtual std::string get_type() = 0;
 
