@@ -8,6 +8,7 @@
 #include "../image/integral-image.h"
 #include "../tools/window.h"
 #include "../features/feature.h"
+#include "../features/four-rectangles-feature.h"
 
 namespace violajones
 {
