@@ -12,6 +12,7 @@
 #include <boost/filesystem.hpp>
 #include "strong-classifier.h"
 #include "../features/four-rectangles-feature.h"
+#include "../features/three-horizontal-rectangles-feature.h"
 
 #define LEARN_PASS (400)
 #define WINDOW_WIDTH (24)
@@ -71,16 +72,16 @@ namespace violajones
               {
                 return WeakClassifier(alpha, threshold, parity, std::make_shared<FourRectanglesFeature>(feature_frame));
               }
-                /*
               else if (feature_type == "ThreeHorizontalRectanglesFeature")
                 return WeakClassifier(alpha, threshold, parity, std::make_shared<ThreeHorizontalRectanglesFeature>(feature_frame));
-              else if (feature_type == "ThreeVerticalRectanglesFeature")
-                return WeakClassifier(alpha, threshold, parity, std::make_shared<ThreeVerticalRectanglesFeature>(feature_frame));
-              else if (feature_type == "TwoHorizontalRectanglesFeature")
-                return WeakClassifier(alpha, threshold, parity, std::make_shared<TwoHorizontalRectanglesFeature>(feature_frame));
-              else if (feature_type == "TwoVerticalRectanglesFeature")
-                return WeakClassifier(alpha, threshold, parity, std::make_shared<TwoVerticalRectanglesFeature>(feature_frame));
-                 */
+              /*
+            else if (feature_type == "ThreeVerticalRectanglesFeature")
+              return WeakClassifier(alpha, threshold, parity, std::make_shared<ThreeVerticalRectanglesFeature>(feature_frame));
+            else if (feature_type == "TwoHorizontalRectanglesFeature")
+              return WeakClassifier(alpha, threshold, parity, std::make_shared<TwoHorizontalRectanglesFeature>(feature_frame));
+            else if (feature_type == "TwoVerticalRectanglesFeature")
+              return WeakClassifier(alpha, threshold, parity, std::make_shared<TwoVerticalRectanglesFeature>(feature_frame));
+               */
               return WeakClassifier(alpha, threshold, parity, std::make_shared<FourRectanglesFeature>(feature_frame));
             };
     std::ifstream infile(path);

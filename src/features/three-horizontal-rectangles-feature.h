@@ -10,6 +10,7 @@ namespace violajones
 {
   class ThreeHorizontalRectanglesFeature : public Feature
   {
+  public:
     ThreeHorizontalRectanglesFeature(Rectangle frame);
 
     virtual int compute_value(Point win_top_left, float size_ratio, IntegralImage image) override;
