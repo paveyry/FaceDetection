@@ -3,6 +3,7 @@
 //
 
 #include "two-vertical-rectangles-feature.h"
+#include "../tools/window.h"
 
 namespace violajones
 {
@@ -47,5 +48,13 @@ namespace violajones
   std::string TwoVerticalRectanglesFeature::get_type()
   {
     return "TwoVerticalRectanglesFeature";
+  }
+
+  std::vector<std::shared_ptr<Feature>> TwoVerticalRectanglesFeature::ListFeatures()
+  {
+    std::vector<std::shared_ptr<Feature>> features;
+    for (auto& rect : Window::list_features_positions(min_width, min_height))
+      features.push_back(std::make_shared<TwoVerticalRectanglesFeature>(rect));
+    return features;
   }
 }

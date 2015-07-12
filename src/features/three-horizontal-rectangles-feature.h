@@ -19,9 +19,11 @@ namespace violajones
 
     virtual std::string get_type() override;
 
+    static std::vector<std::shared_ptr<Feature>> ListFeatures();
+
   public:
-    const int min_width = 3;
-    const int min_height = 1;
+    static const int min_width = 3;
+    static const int min_height = 1;
   };
 }
 

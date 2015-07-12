@@ -46,4 +46,4 @@ namespace violajones
   };
 }
 
-#endif //FACE_RECOG_WINDOW_H
+#endif /* FACE_RECOG_WINDOW_H */

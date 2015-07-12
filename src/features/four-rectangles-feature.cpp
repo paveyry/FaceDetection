@@ -3,6 +3,7 @@
 //
 
 #include "four-rectangles-feature.h"
+#include "../tools/window.h"
 
 namespace violajones
 {
@@ -57,5 +58,13 @@ namespace violajones
   std::string FourRectanglesFeature::get_type()
   {
     return "FourRectanglesFeature";
+  }
+
+  std::vector<std::shared_ptr<Feature>> FourRectanglesFeature::ListFeatures()
+  {
+    std::vector<std::shared_ptr<Feature>> features;
+    for (auto& rect : Window::list_features_positions(min_width, min_height))
+      features.push_back(std::make_shared<FourRectanglesFeature>(rect));
+    return features;
   }
 }
