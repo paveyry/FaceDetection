@@ -5,7 +5,9 @@
 #ifndef FACE_RECOG_THREE_VERTICAL_RECTANGLES_FEATURE_H
 # define FACE_RECOG_THREE_VERTICAL_RECTANGLES_FEATURE_H
 
+# include <memory>
 # include "feature.h"
+# include "../tools/window.h"
 
 namespace violajones
 {
@@ -20,7 +22,7 @@ namespace violajones
 
     virtual std::string get_type() override;
 
-    static std::vector<std::shared_ptr<Feature>> ListFeatures();
+    static std::vector<std::shared_ptr<Feature>> list_features();
 
   public:
     static const int min_width = 1;

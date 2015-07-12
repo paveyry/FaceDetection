@@ -21,7 +21,7 @@ namespace violajones
 
     virtual std::string get_type() override;
 
-    static std::vector<std::shared_ptr<Feature>> ListFeatures();
+    static std::vector<std::shared_ptr<Feature>> list_features();
 
   public:
     static const int min_width = 2;

@@ -60,7 +60,7 @@ namespace violajones
     return "FourRectanglesFeature";
   }
 
-  std::vector<std::shared_ptr<Feature>> FourRectanglesFeature::ListFeatures()
+  std::vector<std::shared_ptr<Feature>> FourRectanglesFeature::list_features()
   {
     std::vector<std::shared_ptr<Feature>> features;
     for (auto& rect : Window::list_features_positions(min_width, min_height))
