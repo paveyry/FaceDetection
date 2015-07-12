@@ -8,7 +8,7 @@
 
 namespace violajones
 {
-  class FourRectanglesFeature : Feature
+  class FourRectanglesFeature : public Feature
   {
   public:
     FourRectanglesFeature(Rectangle frame);

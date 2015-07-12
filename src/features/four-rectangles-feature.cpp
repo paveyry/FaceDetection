@@ -8,7 +8,7 @@ namespace violajones
 {
 
   FourRectanglesFeature::FourRectanglesFeature(Rectangle f)
-    : frame{f}
+    : Feature(f)
   { }
 
   int FourRectanglesFeature::compute_value(Point win_top_left, float size_ratio, IntegralImage image)
@@ -51,8 +51,7 @@ namespace violajones
 
   int FourRectanglesFeature::compute_value(IntegralImage image)
   {
-    Point top_left{0, 0};
-    return compute_value(top_left, 1f, image);
+    return compute_value(Point{0, 0}, 1, image);
   }
 
   std::string FourRectanglesFeature::get_type()

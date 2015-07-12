@@ -14,6 +14,9 @@ namespace violajones
 {
   class Feature
   {
+  protected:
+    Feature(Rectangle f);
+
   public:
     virtual ~Feature() = default;
 
@@ -24,6 +27,8 @@ namespace violajones
     virtual std::string get_type() = 0;
 
     static int normalize_feature(int value, int derivation);
+
+    // TODO ListFeatures
 
   public:
     Rectangle frame;
