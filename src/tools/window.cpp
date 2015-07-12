@@ -57,8 +57,8 @@ namespace violajones
   {
     std::vector<Window> windows;
 
-    auto max_x = image->width;
-    auto max_y = image->height;
+    auto max_x = image->width - WINDOW_WIDTH;
+    auto max_y = image->height - WINDOW_HEIGHT;
 
     for (auto x = 0; x <= max_x; x += WINDOW_DX)
       for (auto y = 0; y <= max_y; y += WINDOW_DY)
@@ -68,7 +68,6 @@ namespace violajones
 
         auto width = WINDOW_WIDTH;
         auto height = WINDOW_HEIGHT;
-
         float ratio = 1;
 
         while (width <= max_width && height <= max_height)
@@ -82,6 +81,28 @@ namespace violajones
       }
 
     return windows;
+  }
+
+  std::vector<Rectangle> Window::list_features_positions(int min_width, int min_height)
+  {
+    std::vector<Rectangle> positions;
+
+    auto max_x = WINDOW_WIDTH - min_width;
+    auto max_y = WINDOW_HEIGHT - min_height;
+
+    for (auto x = 0; x <= max_x; x += FEATURE_DX)
+      for (auto y = 0; y <= max_y; y += FEATURE_DY)
+      {
+        int max_width = WINDOW_WIDTH - x;
+        for (auto width = min_width; width <= max_width; width += min_width)
+        {
+          int max_height = WINDOW_HEIGHT - y;
+          for (auto height = min_height; height <= max_height; height += min_height)
+            positions.push_back(Rectangle{Point{x, y}, width, height});
+        }
+      }
+
+    return positions;
   }
 
   std::vector<std::shared_ptr<Feature>> Window::list_features()
