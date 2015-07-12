@@ -40,9 +40,9 @@ namespace violajones
   public:
     Point top_left;
     float size_ratio;
-    int deviation;
     int width;
     int height;
+    int deviation;
   };
 }
 

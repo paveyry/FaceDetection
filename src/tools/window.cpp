@@ -11,8 +11,8 @@
 namespace violajones
 {
   Window::Window(Point top, float r, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image)
-    : top_left(top), size_ratio(r), deviation{get_deviation(image, squared_image)},
-      width((int)(WINDOW_WIDTH * r)), height((int)(WINDOW_HEIGHT * r))
+    : top_left(top), size_ratio(r), width((int)(WINDOW_WIDTH * r)),
+      height((int)(WINDOW_HEIGHT * r)), deviation(get_deviation(image, squared_image))
   { }
 
   Window::Window(Point top, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image)
