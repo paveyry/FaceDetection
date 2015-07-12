@@ -13,10 +13,7 @@
 #include "strong-classifier.h"
 #include "../features/four-rectangles-feature.h"
 #include "../features/three-horizontal-rectangles-feature.h"
-
-#define LEARN_PASS (400)
-#define WINDOW_WIDTH (24)
-#define WINDOW_HEIGHT (24)
+#include "../config.h"
 
 namespace violajones
 {

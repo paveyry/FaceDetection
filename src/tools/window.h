@@ -10,6 +10,7 @@
 # include "rectangle.h"
 # include "../image/integral-image.h"
 # include "../features/feature.h"
+# include "../config.h"
 
 # define WINDOW_WIDTH 24
 # define WINDOW_HEIGHT 24
