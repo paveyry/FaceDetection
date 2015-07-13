@@ -48,7 +48,39 @@ static void load(po::variables_map& vm)
 
 static void train(po::variables_map& vm)
 {
+  auto classifier = StrongClassifier::train(vm["dir"].as<std::string>());
+  std::cout << "Saving the classifier..." << std::endl;
+  classifier.save(vm["saveclassif"].as<std::string>());
 
+  std::cout << "Beginning face detection on image..." << std::endl;
+  Detector detector{vm["image"].as<std::string>(), classifier};
+  auto d = detector.detect();
+  std::cout << d.size() << std::endl;
+
+  int i = 0;
+  for (auto& rect : d)
+  {
+    std::cerr << "Curr i: " << i++ << " " << rect.to_string() << std::endl;
+    rect.draw(detector.image_->image.pixels);
+  }
+  std::shared_ptr<sf::Image> img = detector.image_->image.pixels;
+  detector.image_->image.pixels->saveToFile(vm["saveimage"].as<std::string>());
+  sf::RenderWindow window(sf::VideoMode(img->getSize().x, img->getSize().y), "Output image");
+  sf::Texture texture;
+  texture.loadFromImage(*img);
+  sf::Sprite sprite(texture);
+  while (window.isOpen())
+  {
+    sf::Event event;
+    while (window.pollEvent(event))
+    {
+      if (event.type == sf::Event::KeyPressed)
+        window.close();
+      window.clear();
+      window.draw(sprite);
+      window.display();
+    }
+  }
 }
 
 int main(int argc, char** argv)
@@ -85,6 +117,8 @@ int main(int argc, char** argv)
       }
       else if (vm["method"].as<std::string>() == "train")
       {
+        if (!vm.count("image"))
+          std::cout << "Please specify an input image" << std::endl;
         train(vm);
       }
       else
