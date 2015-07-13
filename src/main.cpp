@@ -61,12 +61,17 @@ int main(int argc, char** argv)
   }*/
   //StrongClassifier classifier;
 
-  auto classifier = StrongClassifier::load_from_file("/home/veyry_p/prpa/classifier");
-  Detector detector{"/home/veyry_p/prpa/input.png", classifier};
+  auto classifier = StrongClassifier::load_from_file("/home/hasb4k/classifier");
+  Detector detector{"/home/hasb4k/input.png", classifier};
   auto d = detector.detect();
   std::cout << d.size()<<std::endl;
+
+  int i = 0;
   for (auto& rect : d)
+  {
+    std::cerr << "Curr i: " << i++ << " " << rect.to_string() << std::endl;
     rect.draw(detector.image_->image.pixels);
-  detector.image_->image.pixels->saveToFile("/home/veyry_p/prpa/output.png");
+  }
+  detector.image_->image.pixels->saveToFile("/home/hasb4k/output.png");
   return 0;
 }

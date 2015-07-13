@@ -35,7 +35,10 @@ namespace violajones
     double sumvalues = 0.0;
     for (auto& weakclass : classifiers_)
       sumvalues += weakclass.get_value(win, image);
-    return sumvalues >= global_alpha_ / 2.0;
+    bool tmp = sumvalues >= (global_alpha_ / 2.0);
+
+    //std::cout << "StrongClassifier::check " << tmp << " - sumvalues: " << sumvalues << " global_alpha: " << global_alpha_ << std::endl;
+    return tmp;
   }
 
   void StrongClassifier::save(std::string path)
@@ -83,8 +86,10 @@ namespace violajones
               else if (feature_type == "TwoVerticalRectanglesFeature")
                 return WeakClassifier(alpha, threshold, parity,
                                       std::make_shared<TwoVerticalRectanglesFeature>(feature_frame));
+              std::cerr << "Fatal Error: feature_type " << feature_type << std::endl;
               return WeakClassifier(alpha, threshold, parity, std::make_shared<FourRectanglesFeature>(feature_frame));
             };
+
     std::ifstream infile(path);
     std::string line;
     std::vector<WeakClassifier> classifiers;
