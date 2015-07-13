@@ -1,5 +1,5 @@
 BUILD_DIR=_build
-BIN=objdetect
+BIN=facedetect
 
 all: $(BUILD_DIR) cmake
 

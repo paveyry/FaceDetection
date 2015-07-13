@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
-project(face-recog)
-set(EXECUTABLE_NAME "face-recog")
+project(facedetect)
+set(EXECUTABLE_NAME "facedetect")
 
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14 -pedantic -fPIC")
@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14 -pedantic -fPIC")
 
 # Define sources and executable
 file(GLOB_RECURSE sources_files src/*)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 add_executable(${EXECUTABLE_NAME} ${sources_files})
 
 
@@ -21,7 +22,7 @@ find_package(SFML 2 REQUIRED system window graphics)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.45.0 COMPONENTS system filesystem REQUIRED)
+find_package(Boost 1.45.0 COMPONENTS system filesystem program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
