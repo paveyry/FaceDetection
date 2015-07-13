@@ -43,7 +43,7 @@ namespace violajones
 
     auto sum_r1 = f - (b + e) + a;
     auto sum_r2 = g - (c + f) + b;
-    auto sum_r3 = h - (d + g) + d;
+    auto sum_r3 = h - (d + g) + c;
 
     return (int) (sum_r1 - sum_r2 + sum_r3);
   }
