@@ -54,13 +54,12 @@ namespace violajones
 
   void IntegralImage::compute_integral_image()
   {
-    table.resize(width);
-    for (int x = 0; x < height; ++x)
-      table[x].resize(height);
+    for (auto i = 0; i < width; ++i)
+      table.push_back(std::vector<long>(height));
 
     table[0][0] = type(table[0][0]);
     for (int x = 1; x < width; ++x)
-      table[x][0] = table[x - 1][0] + type(image.pixels->getPixel(x, 0).r);
+      table[x].push_back(table[x - 1][0] + type(image.pixels->getPixel(x, 0).r));
 
     for (int y = 1; y < height; ++y)
       table[0][y] = table[0][y - 1] + type(image.pixels->getPixel(0, y).r);

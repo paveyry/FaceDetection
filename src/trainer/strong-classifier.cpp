@@ -32,7 +32,7 @@ namespace violajones
 
   bool StrongClassifier::check(Window win, std::shared_ptr<IntegralImage> image)
   {
-    double sumvalues = 0;
+    double sumvalues = 0.0;
     for (auto& weakclass : classifiers_)
       sumvalues += weakclass.get_value(win, image);
     return sumvalues >= global_alpha_ / 2.0;
@@ -89,9 +89,7 @@ namespace violajones
     std::string line;
     std::vector<WeakClassifier> classifiers;
     while (std::getline(infile, line))
-    {
       classifiers.push_back(restore_classifier(line));
-    }
     return StrongClassifier(classifiers);
   }
 

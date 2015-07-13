@@ -12,7 +12,7 @@ namespace violajones
 {
   Window::Window(Point top, float r, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image)
     : top_left(top), size_ratio(r), width((int)(WINDOW_WIDTH * r)),
-      height((int)(WINDOW_HEIGHT * r)), deviation(get_deviation(image, squared_image))
+      height((int)(WINDOW_WIDTH * r)), deviation(get_deviation(image, squared_image))
   { }
 
   Window::Window(Point top, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image)
@@ -68,11 +68,11 @@ namespace violajones
 
         auto width = WINDOW_WIDTH;
         auto height = WINDOW_HEIGHT;
-        float ratio = 1;
+        float ratio = 1.0f;
 
         while (width <= max_width && height <= max_height)
         {
-          windows.push_back(Window{Point{x, y}, ratio, image, squared_image});
+          windows.push_back(Window(Point(x, y), ratio, image, squared_image));
 
           ratio *= WINDOW_SCALE;
           width = (int) (WINDOW_WIDTH * ratio);
