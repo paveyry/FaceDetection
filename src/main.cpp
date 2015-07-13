@@ -70,32 +70,39 @@ int main(int argc, char** argv)
           ("classif,c", po::value<std::string>(), "Specify the classifier to use")
           ("outclassif,o", po::value<std::string>(), "Specify the output classifier file");
 
-  po::variables_map vm;
-  po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
-  po::notify(vm);
-  if (vm.count("help"))
-    std::cout << desc << std::endl;
-  else if (vm.count("method"))
+  try
   {
-    if (vm["method"].as<std::string>() == "load")
+    po::variables_map vm;
+    po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
+    po::notify(vm);
+    if (vm.count("help"))
+      std::cout << desc << std::endl;
+    else if (vm.count("method"))
     {
-      if (!vm.count("file"))
-        std::cout << "Please specify an input classifier" << std::endl;
-      if (!vm.count("image"))
-        std::cout << "Please specify an input image" << std::endl;
-      if (!vm.count("saveimage"))
-        std::cout << "Please specify the path to save the image" << std::endl;
-      load(vm);
-    }
-    else if (vm["method"].as<std::string>() == "train")
-    {
-      train(vm);
+      if (vm["method"].as<std::string>() == "load")
+      {
+        if (!vm.count("file"))
+          std::cout << "Please specify an input classifier" << std::endl;
+        if (!vm.count("image"))
+          std::cout << "Please specify an input image" << std::endl;
+        load(vm);
+      }
+      else if (vm["method"].as<std::string>() == "train")
+      {
+        train(vm);
+      }
+      else
+        std::cout << "Please specify an existing method" << std::endl;
     }
     else
-      std::cout << "Please specify an existing method" << std::endl;
+    {
+      std::cout << "Please specify a method" << std::endl;
+    }
   }
-  else
-    std::cout << "Please specify a method" << std::endl;
+  catch (std::exception& e)
+  {
+    std::cerr << "Error: " << e.what() << "\n" << desc << std::endl;
+  }
 
 
 
