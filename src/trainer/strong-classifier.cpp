@@ -27,6 +27,7 @@ namespace violajones
     long double galpha = 0;
     for (auto &classifier : classifiers)
       galpha += classifier.alpha_;
+
     global_alpha_ = galpha;
   }
 
@@ -71,10 +72,12 @@ namespace violajones
               int threshold = std::stoi(tokens[1]);
               char parity = (char) std::stoi(tokens[2]);
               std::string feature_type = tokens[3];
+
               int featurex = std::stoi(tokens[4]);
               int featurey = std::stoi(tokens[5]);
               int featurewidth = std::stoi(tokens[6]);
               int featureheight = std::stoi(tokens[7]);
+
               Rectangle feature_frame(Point(featurex, featurey), featurewidth, featureheight);
               if (feature_type == "FourRectanglesFeature")
                 return WeakClassifier(alpha, threshold, parity, std::make_shared<FourRectanglesFeature>(feature_frame));
@@ -90,6 +93,7 @@ namespace violajones
               else if (feature_type == "TwoVerticalRectanglesFeature")
                 return WeakClassifier(alpha, threshold, parity,
                                       std::make_shared<TwoVerticalRectanglesFeature>(feature_frame));
+
               std::cerr << "Fatal Error: feature_type " << feature_type << std::endl;
               return WeakClassifier(alpha, threshold, parity, std::make_shared<FourRectanglesFeature>(feature_frame));
             };
@@ -111,15 +115,16 @@ namespace violajones
     auto &tests = tests_set.first;
     auto &features_values = tests_set.second;
 
-    unsigned long ncached_features;
+    unsigned long ncached_features = 0;
     for (FeatureValues &ftvalues : features_values)
       if (ftvalues.values_.size())
         ++ncached_features;
+
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> diff = end - start;
     std::cout << "Tests loaded in " << diff.count() << " seconds ("
-    << ncached_features * 100 / features_values.size()
-    << "% cached)\n Launching training..." << std::endl;
+        << ncached_features * 100 / features_values.size()
+        << "% cached)\n Launching training..." << std::endl;
 
     std::vector<WeakClassifier> classifiers;
     auto ipass = 1;
@@ -129,6 +134,7 @@ namespace violajones
       std::cout << ipass << "/" << Config::learn_pass << "trainer pass..." << std::endl;
       double weightsum = std::accumulate(tests.begin(), tests.end(), 0.0,
                                          [](double acc, TestImage &t) { return t.weight_ + acc; });
+
       double validweight = 0.0;
       for (size_t i = 0; i < tests.size(); ++i)
       {
@@ -136,6 +142,7 @@ namespace violajones
         if (tests[i].valid_)
           validweight += tests[i].weight_;
       }
+
       TestWeakClassifier best(features_values[0], 0, 1, std::numeric_limits<double>::max());
       // TO PARALLELISE
       std::for_each(features_values.begin(), features_values.end(),
@@ -147,15 +154,17 @@ namespace violajones
 
       end = std::chrono::steady_clock::now();
       diff = end - start;
+
       std::cout << "New weak classifier selected in " << diff.count() << " seconds (error score : "
-      << best.errors_ << "\n"
-      << "X: " << best.feature_.feature_->frame.top_left.x << " Y: " << best.feature_.feature_->frame.top_left.y
-      << " - Width: " << best.feature_.feature_->frame.width << " Height: "
-      << best.feature_.feature_->frame.height
-      << std::endl;
-      auto beta = best.errors_ / (1.0 - best.errors_);
-      if (beta < 1 / 100000000)
-        beta = 1 / 100000000;
+          << best.errors_ << "\n"
+          << "X: " << best.feature_.feature_->frame.top_left.x
+          << " Y: " << best.feature_.feature_->frame.top_left.y
+          << " - Width: " << best.feature_.feature_->frame.width
+          << " Height: " << best.feature_.feature_->frame.height << std::endl;
+
+      double beta = best.errors_ / (1.0 - best.errors_);
+      if (beta < 1.0 / 100000000)
+        beta = 1.0 / 100000000;
 
       for (FeatureValue &featurevalue : best.feature_.values_)
         if (best.check(featurevalue.value_) == tests[featurevalue.test_index_].valid_)
@@ -165,6 +174,7 @@ namespace violajones
       classifiers.push_back(best.get_classifier(alpha));
       ++ipass;
     }
+
     std::cout << "Training finished" << std::endl;
     return StrongClassifier(classifiers);
   }
@@ -186,8 +196,9 @@ namespace violajones
 
     for (auto i = good.size(); i < good.size() + bad.size(); ++i)
       tests.push_back(TestImage(bad[i - good.size()], badweight, false));
+
     auto features_values = compute_features_values(tests);
-    return std::pair<std::vector<TestImage>, std::vector<FeatureValues> >(tests, features_values);
+    return std::pair<std::vector<TestImage>, std::vector<FeatureValues>>(tests, features_values);
   }
 
   std::vector<FeatureValues> StrongClassifier::compute_features_values(std::vector<TestImage> tests)
@@ -208,7 +219,10 @@ namespace violajones
     sfimage.loadFromFile(imagepath);
     if (sfimage.getSize().x != Config::window_width || sfimage.getSize().y != Config::window_height)
     {
-      std::cerr << "Invalid test image_ size" << std::endl;
+      std::cerr << "Invalid image size (must be "
+          << Config::window_width << "*"
+          << Config::window_height << "): "
+          << imagepath << std::endl;
       exit(1);
     }
     return GreyImage(sfimage);
@@ -224,6 +238,8 @@ namespace violajones
       for (fs::directory_iterator iter(path); iter != end_itr; ++iter)
         if (fs::is_regular_file(iter->status()))
           images.push_back(load_image(iter->path().string()));
+    // TODO error if images empty
+
     return images;
   }
 }

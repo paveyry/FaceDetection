@@ -15,7 +15,7 @@
 #include "weak-classifier.h"
 #include "feature-value.h"
 #include "test-image.h"
-#include "features-values.h"
+#include "feature-values.h"
 #include "../image/grey-image.h"
 #include "../image/integral-image.h"
 #include "../tools/window.h"

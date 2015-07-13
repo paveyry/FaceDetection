@@ -20,32 +20,30 @@ namespace violajones
   {
     if (feature.values_.empty())
       feature.values_ = FeatureValue::compute_all_values(tests, *feature.feature_);
+
     auto positive_error = validweight;
-    TestWeakClassifier* best = new TestWeakClassifier(feature, feature.values_[0].value_, 1, positive_error);
+
+    TestWeakClassifier best(feature, feature.values_[0].value_, 1, positive_error);
+
     for (size_t itest = 0; itest < feature.values_.size(); ++itest)
     {
       if (tests[feature.values_[itest].test_index_].valid_)
       {
         positive_error -= tests[feature.values_[itest].test_index_].weight_;
-        if (positive_error < best->errors_)
-        {
-          delete best;
-          best = new TestWeakClassifier(feature, feature.values_[itest].value_ + 1, 1, positive_error);
-        }
+
+        if (positive_error < best.errors_)
+          best = TestWeakClassifier(feature, feature.values_[itest].value_ + 1, 1, positive_error);
       }
       else
       {
         positive_error += tests[feature.values_[itest].test_index_].weight_;
         auto negative_error = 1.0 - positive_error;
-        if (negative_error < best->errors_)
-        {
-          delete best;
-          best = new TestWeakClassifier(feature, feature.values_[itest].value_ - 1, -1, negative_error);
-        }
+
+        if (negative_error < best.errors_)
+          best = TestWeakClassifier(feature, feature.values_[itest].value_ - 1, -1, negative_error);
       }
     }
-    TestWeakClassifier t = *best;
-    delete best;
-    return t;
+
+    return best;
   }
 }

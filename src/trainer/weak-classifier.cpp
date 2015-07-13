@@ -28,9 +28,6 @@ namespace violajones
 
   double WeakClassifier::get_value(Window win, std::shared_ptr<IntegralImage> image)
   {
-    if (check(win, image))
-      return alpha_;
-    else
-      return 0;
+    return check(win, image) ? alpha_ : 0;
   }
 }

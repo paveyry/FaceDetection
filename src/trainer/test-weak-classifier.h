@@ -5,7 +5,7 @@
 #ifndef FACE_RECOG_TEST_WEAK_CLASSIFIER_H
 #define FACE_RECOG_TEST_WEAK_CLASSIFIER_H
 
-#include "features-values.h"
+#include "feature-values.h"
 #include "weak-classifier.h"
 
 
