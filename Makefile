@@ -10,4 +10,4 @@ cmake:
 	cd $(BUILD_DIR) && cmake .. && make
 
 clean:
-	rm -rf $(BIN) $(BUILD_DIR)
+	rm -rf $(BIN) $(BUILD_DIR) output.png classif
