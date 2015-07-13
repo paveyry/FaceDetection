@@ -7,22 +7,15 @@
 #include <boost/program_options.hpp>
 #include "image/integral-image.h"
 #include "detector/detector.h"
+#include "config.h"
 #include "trainer/strong-classifier.h"
 
 using namespace violajones;
 namespace po = boost::program_options;
 
-void print_usage(void)
-{
-  std::cout << "Usage:\n"
-  << "./face-recog load <classifier_file> -i <image>\n"
-  << "./face-recog train <training_dir> <output_classifier_path> [-i image]"
-  << std::endl;
-}
-
 static void load(po::variables_map& vm)
 {
-  auto classifier = StrongClassifier::load_from_file(vm["file"].as<std::string>());
+  auto classifier = StrongClassifier::load_from_file(vm["classif"].as<std::string>());
   Detector detector{vm["image"].as<std::string>(), classifier};
   auto d = detector.detect();
   std::cout << d.size() << std::endl;
@@ -84,7 +77,7 @@ int main(int argc, char** argv)
         Config::init_verbose_debug(vm["verbose"].as<int>());
       if (vm["method"].as<std::string>() == "load")
       {
-        if (!vm.count("file"))
+        if (!vm.count("classif"))
           std::cout << "Please specify an input classifier" << std::endl;
         if (!vm.count("image"))
           std::cout << "Please specify an input image" << std::endl;
