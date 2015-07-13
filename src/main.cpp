@@ -68,7 +68,8 @@ int main(int argc, char** argv)
           ("dir,d", po::value<std::string>()->default_value("learning-tests"), "Specify the training dir")
           ("outimage,o", po::value<std::string>()->default_value("output.png"), "Specify the output image name")
           ("classif,c", po::value<std::string>(), "Specify the classifier to use")
-          ("saveclassif,s", po::value<std::string>()->default_value("classif"), "Specify the output classifier file");
+          ("saveclassif,s", po::value<std::string>()->default_value("classif"), "Specify the output classifier file")
+          ("verbose,v", po::value<int>()->default_value(0), "Define the verbose level (0, 1, 2)");
 
   try
   {
@@ -79,6 +80,8 @@ int main(int argc, char** argv)
       std::cout << desc << std::endl;
     else if (vm.count("method"))
     {
+      if (vm.count("verbose"))
+        Config::init_verbose_debug(vm["verbose"].as<int>());
       if (vm["method"].as<std::string>() == "load")
       {
         if (!vm.count("file"))
