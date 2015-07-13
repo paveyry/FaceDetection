@@ -1,10 +1,18 @@
-.idea
+# Standard .ext
 *.o
 *.so
 *.d
 *.swp
 *.swo
-face-recog
+
+# Directories
 _build
-classif
+.idea
+
+# temporary tests files
+input.png
 output.png
+classif
+
+# Binary
+facedetect
