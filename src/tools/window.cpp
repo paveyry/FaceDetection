@@ -11,8 +11,8 @@
 namespace violajones
 {
   Window::Window(Point top, float r, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image)
-    : top_left(top), size_ratio(r), width((int)(WINDOW_WIDTH * r)),
-      height((int)(WINDOW_WIDTH * r)), deviation(get_deviation(image, squared_image))
+    : top_left(top), size_ratio(r), width((int)(Config::window_width * r)),
+      height((int)(Config::window_height * r)), deviation(get_deviation(image, squared_image))
   { }
 
   Window::Window(Point top, std::shared_ptr<IntegralImage> image, std::shared_ptr<IntegralImage> squared_image)
@@ -57,26 +57,26 @@ namespace violajones
   {
     std::vector<Window> windows;
 
-    auto max_x = image->width - WINDOW_WIDTH;
-    auto max_y = image->height - WINDOW_HEIGHT;
+    auto max_x = image->width - Config::window_width;
+    auto max_y = image->height - Config::window_height;
 
-    for (auto x = 0; x <= max_x; x += WINDOW_DX)
-      for (auto y = 0; y <= max_y; y += WINDOW_DY)
+    for (auto x = 0; x <= max_x; x += Config::window_dx)
+      for (auto y = 0; y <= max_y; y += Config::window_dy)
       {
         auto max_width = image->width - x;
         auto max_height = image->height - y;
 
-        auto width = WINDOW_WIDTH;
-        auto height = WINDOW_HEIGHT;
+        auto width = Config::window_width;
+        auto height = Config::window_height;
         float ratio = 1.0f;
 
         while (width <= max_width && height <= max_height)
         {
           windows.push_back(Window(Point(x, y), ratio, image, squared_image));
 
-          ratio *= WINDOW_SCALE;
-          width = (int) (WINDOW_WIDTH * ratio);
-          height = (int) (WINDOW_HEIGHT * ratio);
+          ratio *= Config::window_scale;
+          width = (int) (Config::window_width * ratio);
+          height = (int) (Config::window_height * ratio);
         }
       }
 
@@ -87,16 +87,16 @@ namespace violajones
   {
     std::vector<Rectangle> positions;
 
-    auto max_x = WINDOW_WIDTH - min_width;
-    auto max_y = WINDOW_HEIGHT - min_height;
+    auto max_x = Config::window_width - min_width;
+    auto max_y = Config::window_height - min_height;
 
-    for (auto x = 0; x <= max_x; x += FEATURE_DX)
-      for (auto y = 0; y <= max_y; y += FEATURE_DY)
+    for (auto x = 0; x <= max_x; x += Config::feature_dx)
+      for (auto y = 0; y <= max_y; y += Config::feature_dy)
       {
-        int max_width = WINDOW_WIDTH - x;
+        int max_width = Config::window_width - x;
         for (auto width = min_width; width <= max_width; width += min_width)
         {
-          int max_height = WINDOW_HEIGHT - y;
+          int max_height = Config::window_height - y;
           for (auto height = min_height; height <= max_height; height += min_height)
             positions.push_back(Rectangle{Point{x, y}, width, height});
         }

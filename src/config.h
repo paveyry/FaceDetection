@@ -5,17 +5,36 @@
 #ifndef FACE_RECOG_CONFIG_H
 # define FACE_RECOG_CONFIG_H
 
-# define WINDOW_WIDTH 24
-# define WINDOW_HEIGHT 24
+class Config
+{
+public:
+  /* INIT FUNCTION */
+  static inline void init_verbose_debug(int verbose)
+  {
+    debug_detector_detect = verbose >= 1;
+    debug_classifier_check = verbose >= 2;
+  }
 
-# define WINDOW_SCALE (1.25f)
+  /* WINDOW */
+  static constexpr float window_scale = 1.25f;
 
-# define WINDOW_DX 1
-# define WINDOW_DY 1
+  static constexpr int window_width = 24;
+  static constexpr int window_height = 24;
 
-# define FEATURE_DX 1
-# define FEATURE_DY 1
+  static constexpr int window_dx = 1;
+  static constexpr int window_dy = 1;
 
-# define LEARN_PASS 400
+  /* FEATURE */
+  static constexpr int feature_dx = 1;
+  static constexpr int feature_dy = 1;
+
+  /* LEARNING */
+  static constexpr int learn_pass = 400;
+
+  /* DEBUG */
+  static int debug_detector_detect;
+  static int debug_classifier_check;
+
+};
 
 #endif //FACE_RECOG_CONFIG_H

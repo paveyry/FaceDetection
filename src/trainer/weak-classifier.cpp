@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include "../config.h"
 #include "weak-classifier.h"
 
 namespace violajones
@@ -13,10 +14,16 @@ namespace violajones
     int sized_value = (int) (feature_value / (win.size_ratio * win.size_ratio));
     auto normalized_value = Feature::normalize_feature(sized_value, win.deviation);
 
+
     bool tmp = parity_ * normalized_value < parity_ * threshold_;
 
-    //std::cout << "WeakClassifier::check " << tmp << " - feature_value: " << feature_value << " sized_value: " << sized_value << " normalized_value: " << normalized_value << std::endl;
+    if (Config::debug_classifier_check)
+      std::cout << "WeakClassifier::check " << tmp << " Feature: " << feature_->get_type()
+          << " - feature_value: " << feature_value
+          << " sized_value: " << sized_value
+          << " normalized_value: " << normalized_value << std::endl;
     return tmp;
+
   }
 
   double WeakClassifier::get_value(Window win, std::shared_ptr<IntegralImage> image)

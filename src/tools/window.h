@@ -12,9 +12,6 @@
 # include "../features/feature.h"
 # include "../config.h"
 
-# define WINDOW_WIDTH 24
-# define WINDOW_HEIGHT 24
-
 namespace violajones
 {
   class Window

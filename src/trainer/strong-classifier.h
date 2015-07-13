@@ -49,7 +49,7 @@ namespace violajones
 
   public:
     std::vector<WeakClassifier> classifiers_;
-    double global_alpha_;
+    long double global_alpha_;
 
   };
 }

@@ -24,20 +24,24 @@ namespace violajones
   StrongClassifier::StrongClassifier(std::vector<WeakClassifier> classifiers)
           : classifiers_{classifiers}
   {
-    double galpha = 0;
-    for (auto& classifier : classifiers)
+    long double galpha = 0;
+    for (auto &classifier : classifiers)
       galpha += classifier.alpha_;
     global_alpha_ = galpha;
   }
 
   bool StrongClassifier::check(Window win, std::shared_ptr<IntegralImage> image)
   {
-    double sumvalues = 0.0;
-    for (auto& weakclass : classifiers_)
+    long double sumvalues = 0.0;
+    for (auto &weakclass : classifiers_)
       sumvalues += weakclass.get_value(win, image);
-    bool tmp = sumvalues >= (global_alpha_ / 2.0);
 
-    //std::cout << "StrongClassifier::check " << tmp << " - sumvalues: " << sumvalues << " global_alpha: " << global_alpha_ << std::endl;
+    bool tmp = sumvalues >= (global_alpha_ / 2.0);
+    if (Config::debug_classifier_check)
+      std::cout << "StrongClassifier::check " << tmp
+          << " - sumvalues: " << sumvalues
+          << " global_alpha: " << global_alpha_ << std::endl;
+
     return tmp;
   }
 
@@ -45,7 +49,7 @@ namespace violajones
   {
     std::fstream fs;
     fs.open(path);
-    for (auto& classif : classifiers_)
+    for (auto &classif : classifiers_)
       fs << classif.alpha_ << " "
       << classif.threshold_ << " "
       << classif.parity_ << " "
@@ -59,13 +63,13 @@ namespace violajones
 
   StrongClassifier StrongClassifier::load_from_file(std::string path)
   {
-    std::function<WeakClassifier(std::string&)> restore_classifier =
-            [](std::string& s) {
+    std::function<WeakClassifier(std::string &)> restore_classifier =
+            [](std::string &s) {
               std::vector<std::string> tokens;
               boost::split(tokens, s, boost::is_any_of(" ;"));
               double alpha = std::stod(tokens[0]);
               int threshold = std::stoi(tokens[1]);
-              char parity = (char)std::stoi(tokens[2]);
+              char parity = (char) std::stoi(tokens[2]);
               std::string feature_type = tokens[3];
               int featurex = std::stoi(tokens[4]);
               int featurey = std::stoi(tokens[5]);
@@ -104,11 +108,11 @@ namespace violajones
     << "Loading trainer tests ..." << std::endl;
     auto start = std::chrono::steady_clock::now();
     auto tests_set = load_tests_set(tests_dir);
-    auto& tests = tests_set.first;
-    auto& features_values = tests_set.second;
+    auto &tests = tests_set.first;
+    auto &features_values = tests_set.second;
 
     unsigned long ncached_features;
-    for (FeatureValues& ftvalues : features_values)
+    for (FeatureValues &ftvalues : features_values)
       if (ftvalues.values_.size())
         ++ncached_features;
     auto end = std::chrono::steady_clock::now();
@@ -119,12 +123,12 @@ namespace violajones
 
     std::vector<WeakClassifier> classifiers;
     auto ipass = 1;
-    while (ipass <= LEARN_PASS)
+    while (ipass <= Config::learn_pass)
     {
       start = std::chrono::steady_clock::now();
-      std::cout << ipass << "/" << LEARN_PASS << "trainer pass..." << std::endl;
+      std::cout << ipass << "/" << Config::learn_pass << "trainer pass..." << std::endl;
       double weightsum = std::accumulate(tests.begin(), tests.end(), 0.0,
-                                         [](double acc, TestImage& t) { return t.weight_ + acc; });
+                                         [](double acc, TestImage &t) { return t.weight_ + acc; });
       double validweight = 0.0;
       for (size_t i = 0; i < tests.size(); ++i)
       {
@@ -135,7 +139,7 @@ namespace violajones
       TestWeakClassifier best(features_values[0], 0, 1, std::numeric_limits<double>::max());
       // TO PARALLELISE
       std::for_each(features_values.begin(), features_values.end(),
-                    [&](FeatureValues& fv) {
+                    [&](FeatureValues &fv) {
                       auto new_classifier = TestWeakClassifier::train(tests, validweight, fv);
                       if (best.errors_ > new_classifier.errors_)
                         best = new_classifier;
@@ -153,7 +157,7 @@ namespace violajones
       if (beta < 1 / 100000000)
         beta = 1 / 100000000;
 
-      for (FeatureValue& featurevalue : best.feature_.values_)
+      for (FeatureValue &featurevalue : best.feature_.values_)
         if (best.check(featurevalue.value_) == tests[featurevalue.test_index_].valid_)
           tests[featurevalue.test_index_].weight_ *= beta;
 
@@ -202,7 +206,7 @@ namespace violajones
   {
     sf::Image sfimage;
     sfimage.loadFromFile(imagepath);
-    if (sfimage.getSize().x != WINDOW_WIDTH || sfimage.getSize().y != WINDOW_HEIGHT)
+    if (sfimage.getSize().x != Config::window_width || sfimage.getSize().y != Config::window_height)
     {
       std::cerr << "Invalid test image_ size" << std::endl;
       exit(1);
