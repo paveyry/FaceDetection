@@ -63,12 +63,12 @@ int main(int argc, char** argv)
   po::options_description desc("Options");
   desc.add_options()
           ("help,h", "Print help messages")
-          ("method,m", po::value<std::string>(), "Select the method (load or train")
+          ("method,m", po::value<std::string>()->default_value("load"), "Select the method (load or train")
           ("image,i", po::value<std::string>(), "Specify the input image")
-          ("dir,d", po::value<std::string>(), "Specify the training dir")
-          ("saveimage,s", po::value<std::string>(), "Specify the output image name")
+          ("dir,d", po::value<std::string>()->default_value("learning-tests"), "Specify the training dir")
+          ("outimage,o", po::value<std::string>()->default_value("output.png"), "Specify the output image name")
           ("classif,c", po::value<std::string>(), "Specify the classifier to use")
-          ("outclassif,o", po::value<std::string>(), "Specify the output classifier file");
+          ("saveclassif,s", po::value<std::string>()->default_value("classif"), "Specify the output classifier file");
 
   try
   {
@@ -103,9 +103,5 @@ int main(int argc, char** argv)
   {
     std::cerr << "Error: " << e.what() << "\n" << desc << std::endl;
   }
-
-
-
-
   return 0;
 }
