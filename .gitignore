@@ -6,3 +6,5 @@
 *.swo
 face-recog
 _build
+classif
+output.png
