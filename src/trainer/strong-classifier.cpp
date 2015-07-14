@@ -48,7 +48,7 @@ namespace violajones
 
   void StrongClassifier::save(std::string path)
   {
-    std::fstream fs;
+    std::ofstream fs;
     fs.open(path);
     for (auto &classif : classifiers_)
       fs << classif.alpha_ << " "
