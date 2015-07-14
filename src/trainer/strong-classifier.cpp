@@ -128,10 +128,11 @@ namespace violajones
 
     std::vector<WeakClassifier> classifiers;
     auto ipass = 1;
+    auto global_start = std::chrono::steady_clock::now();
     while (ipass <= Config::learn_pass)
     {
       start = std::chrono::steady_clock::now();
-      std::cout << ipass << "/" << Config::learn_pass << "trainer pass..." << std::endl;
+      std::cout << ipass << "/" << Config::learn_pass << " trainer pass..." << std::endl;
       double weightsum = std::accumulate(tests.begin(), tests.end(), 0.0,
                                          [](double acc, TestImage &t) { return t.weight_ + acc; });
 
@@ -156,7 +157,7 @@ namespace violajones
       diff = end - start;
 
       std::cout << "New weak classifier selected in " << diff.count() << " seconds (error score : "
-          << best.errors_ << "\n"
+          << best.errors_ << ")\n"
           << "X: " << best.feature_.feature_->frame.top_left.x
           << " Y: " << best.feature_.feature_->frame.top_left.y
           << " - Width: " << best.feature_.feature_->frame.width
@@ -175,7 +176,8 @@ namespace violajones
       ++ipass;
     }
 
-    std::cout << "Training finished" << std::endl;
+    std::cout << "Training finished in " << (std::chrono::steady_clock::now() - global_start).count()
+              << " secs." << std::endl;
     return StrongClassifier(classifiers);
   }
 

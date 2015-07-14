@@ -70,7 +70,7 @@ static void train(po::variables_map& vm)
     rect.draw(detector.image_->image.pixels);
   }
   std::shared_ptr<sf::Image> img = detector.image_->image.pixels;
-  detector.image_->image.pixels->saveToFile(vm["saveimage"].as<std::string>());
+  detector.image_->image.pixels->saveToFile(vm["outimage"].as<std::string>());
   sf::RenderWindow window(sf::VideoMode(img->getSize().x, img->getSize().y), "Output image");
   sf::Texture texture;
   texture.loadFromImage(*img);
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
   po::options_description desc("Options");
   desc.add_options()
           ("help,h", "Print help messages")
-          ("method,m", po::value<std::string>()->default_value("load"), "Select the method (load or train")
+          ("method,m", po::value<std::string>()->default_value("load"), "Select the method (load or train)")
           ("image,i", po::value<std::string>(), "Specify the input image")
           ("dir,d", po::value<std::string>()->default_value("learning-tests"), "Specify the training dir")
           ("outimage,o", po::value<std::string>()->default_value("output.png"), "Specify the output image name")
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
     po::notify(vm);
     Config::init_learn_pass(vm["passes"].as<int>());
     Config::init_verbose_debug(vm["verbose"].as<int>());
-    
+
     if (vm.count("help"))
       std::cout << desc << std::endl;
     else if (vm.count("method"))
