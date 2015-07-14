@@ -5,6 +5,8 @@
 #ifndef FACE_RECOG_CONFIG_H
 # define FACE_RECOG_CONFIG_H
 
+#include <stdint.h>
+
 class Config
 {
 public:
@@ -13,6 +15,11 @@ public:
   {
     debug_detector_detect = verbose >= 1;
     debug_classifier_check = verbose >= 2;
+  }
+
+  static inline void init_learn_pass(int passes)
+  {
+    learn_pass = passes;
   }
 
   /* WINDOW */
@@ -29,7 +36,7 @@ public:
   static constexpr int feature_dy = 1;
 
   /* LEARNING */
-  static constexpr int learn_pass = 400;
+  static int learn_pass;
 
   /* DEBUG */
   static int debug_detector_detect;
