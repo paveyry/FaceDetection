@@ -13,6 +13,12 @@
 using namespace violajones;
 namespace po = boost::program_options;
 
+static int print_error_usage(std::string message, po::options_description& desc)
+{
+  std::cout << message << "\n" << desc << std::endl;
+  return 1;
+}
+
 static void load(po::variables_map& vm)
 {
   auto classifier = StrongClassifier::load_from_file(vm["classif"].as<std::string>());
@@ -27,7 +33,7 @@ static void load(po::variables_map& vm)
     rect.draw(detector.image_->image.pixels);
   }
   std::shared_ptr<sf::Image> img = detector.image_->image.pixels;
-  detector.image_->image.pixels->saveToFile(vm["saveimage"].as<std::string>());
+  detector.image_->image.pixels->saveToFile(vm["outimage"].as<std::string>());
   sf::RenderWindow window(sf::VideoMode(img->getSize().x, img->getSize().y), "Output image");
   sf::Texture texture;
   texture.loadFromImage(*img);
@@ -110,24 +116,22 @@ int main(int argc, char** argv)
       if (vm["method"].as<std::string>() == "load")
       {
         if (!vm.count("classif"))
-          std::cout << "Please specify an input classifier" << std::endl;
+          return print_error_usage("Please specify an input classifier", desc);
         if (!vm.count("image"))
-          std::cout << "Please specify an input image" << std::endl;
+          return print_error_usage("Please specify an input image", desc);
         load(vm);
       }
       else if (vm["method"].as<std::string>() == "train")
       {
         if (!vm.count("image"))
-          std::cout << "Please specify an input image" << std::endl;
+          return print_error_usage("Please specify an input image", desc);
         train(vm);
       }
       else
-        std::cout << "Please specify an existing method" << std::endl;
+        return print_error_usage("Please specify an existing method", desc);
     }
     else
-    {
-      std::cout << "Please specify a method" << std::endl;
-    }
+      return print_error_usage("Please specify a method", desc);
   }
   catch (std::exception& e)
   {
