@@ -24,7 +24,6 @@ static void load(po::variables_map& vm)
   auto classifier = StrongClassifier::load_from_file(vm["classif"].as<std::string>());
   Detector detector{vm["image"].as<std::string>(), classifier};
   auto d = detector.detect();
-  std::cout << d.size() << std::endl;
 
   int i = 0;
   for (auto& rect : d)

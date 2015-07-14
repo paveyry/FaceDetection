@@ -14,7 +14,6 @@ namespace violajones
 
   int TwoVerticalRectanglesFeature::compute_value(Point win_top_left, float size_ratio, std::shared_ptr<IntegralImage> image)
   {
-    //std::cout << "TwoVerticalFeature" << std::endl;
     Rectangle scaled_frame = frame.scale(size_ratio);
     Point top_left = scaled_frame.top_left.nested_point(win_top_left);
     int rects_width = scaled_frame.width;
