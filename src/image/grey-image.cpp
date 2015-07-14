@@ -9,6 +9,7 @@ namespace violajones
   GreyImage::GreyImage(sf::Image image)
   {
     pixels = std::make_shared<sf::Image>(image);
+    create_pixels();
   }
 
   GreyImage::GreyImage(const std::string path)
