@@ -257,27 +257,35 @@ namespace violajones
     return std::make_shared<GreyImage>(GreyImage(sfimage));
   }
 
-  tbb::concurrent_vector<std::shared_ptr<GreyImage> > StrongClassifier::load_images(std::string dir)
+  tbb::concurrent_vector<std::shared_ptr<GreyImage>> StrongClassifier::load_images(std::string dir)
   {
     namespace fs = boost::filesystem;
     fs::path path(dir);
     fs::directory_iterator end_itr;
     tbb::concurrent_vector<std::shared_ptr<GreyImage>> images;
+
+    size_t number_loaded = 0;
     if (Config::parallelized)
     {
       std::vector<std::string> strings;
-      for (fs::directory_iterator iter(path); iter != end_itr; ++iter)
+      for (fs::directory_iterator iter(path);
+           iter != end_itr && (number_loaded < Config::number_load || !Config::number_load);
+           ++iter, ++number_loaded)
         if (fs::is_regular_file(iter->status()))
           strings.push_back(iter->path().string());
+
       tbb::parallel_for_each(strings.begin(), strings.end(),
                              [&](std::string string) {
                                images.push_back(load_image(string));
                              });
     }
     else if (fs::exists(path) && fs::is_directory(path))
-      for (fs::directory_iterator iter(path); iter != end_itr; ++iter)
+      for (fs::directory_iterator iter(path);
+           iter != end_itr && (number_loaded < Config::number_load || !Config::number_load);
+           ++iter, ++number_loaded)
         if (fs::is_regular_file(iter->status()))
           images.push_back(load_image(iter->path().string()));
+    std::cout << "Loaded " << images.size() << " in " << dir << images[0]->pixels->getSize().x << std::endl;
 
     return images;
   }

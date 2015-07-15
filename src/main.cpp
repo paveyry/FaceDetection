@@ -90,8 +90,8 @@ int main(int argc, char** argv)
           ("para,p", "Activates parallelization");
 
 
-  //try
-  //{
+  try
+  {
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
     po::notify(vm);
@@ -123,10 +123,10 @@ int main(int argc, char** argv)
     }
     else
       return print_error_usage("Please specify a method", desc);
-  //}
-  //catch (std::exception& e)
-  //{
-    //std::cerr << "Error: " << e.what() << "\n" << desc << std::endl;
-  //}
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Error: " << e.what() << "\n" << desc << std::endl;
+  }
   return 0;
 }
