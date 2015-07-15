@@ -100,7 +100,8 @@ int main(int argc, char** argv)
           ("classif,c", po::value<std::string>(), "Specify the classifier to use")
           ("saveclassif,s", po::value<std::string>()->default_value("classif"), "Specify the output classifier file")
           ("verbose,v", po::value<int>()->default_value(0), "Define the verbose level (0, 1, 2)")
-          ("passes,p", po::value<int>()->default_value(400), "Define the nomber of learning passes");
+          ("passes,l", po::value<int>()->default_value(400), "Define the nomber of learning passes")
+          ("para,p", "Activates parallelization");
 
 
   try
@@ -110,7 +111,8 @@ int main(int argc, char** argv)
     po::notify(vm);
     Config::init_learn_pass(vm["passes"].as<int>());
     Config::init_verbose_debug(vm["verbose"].as<int>());
-
+    if (vm.count("para"))
+      Config::set_parallelized();
     if (vm.count("help"))
       std::cout << desc << std::endl;
     else if (vm.count("method"))

@@ -22,6 +22,11 @@ public:
     learn_pass = passes;
   }
 
+  static inline void set_parallelized()
+  {
+    parallelized = true;
+  }
+
   /* WINDOW */
   static constexpr float window_scale = 1.25f;
 
@@ -41,6 +46,9 @@ public:
   /* DEBUG */
   static int debug_detector_detect;
   static int debug_classifier_check;
+
+  /* PARALLELIZE */
+  static bool parallelized;
 
 };
 
