@@ -16,7 +16,7 @@ namespace violajones
     return WeakClassifier(alpha, threshold_, parity_, feature_.feature_);
   }
 
-  TestWeakClassifier TestWeakClassifier::train(std::vector<TestImage> tests, double validweight, FeatureValues feature)
+  TestWeakClassifier TestWeakClassifier::train(std::vector<TestImage>& tests, double validweight, FeatureValues& feature)
   {
     if (feature.values_.empty())
       feature.values_ = FeatureValue::compute_all_values(tests, *feature.feature_);

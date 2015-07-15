@@ -22,7 +22,7 @@ namespace violajones
 
     WeakClassifier get_classifier(double alpha);
 
-    static TestWeakClassifier train(std::vector<TestImage> tests, double validweight, FeatureValues feature);
+    static TestWeakClassifier train(std::vector<TestImage>& tests, double validweight, FeatureValues& feature);
 
   public:
     FeatureValues feature_;

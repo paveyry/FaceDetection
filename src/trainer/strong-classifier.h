@@ -43,9 +43,9 @@ namespace violajones
 
     static std::vector<FeatureValues> compute_features_values(std::vector<TestImage> tests);
 
-    static GreyImage load_image(std::string imagepath);
+    static std::shared_ptr<GreyImage> load_image(std::string imagepath);
 
-    static std::vector<GreyImage> load_images(std::string dir);
+    static std::vector<std::shared_ptr<GreyImage> > load_images(std::string dir);
 
   public:
     std::vector<WeakClassifier> classifiers_;

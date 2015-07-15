@@ -9,6 +9,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <tbb/tbb.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include "strong-classifier.h"
@@ -19,13 +20,14 @@
 #include "../features/two-horizontal-rectangles-feature.h"
 #include "../features/three-vertical-rectangles-feature.h"
 
+static tbb::mutex mutex;
 namespace violajones
 {
   StrongClassifier::StrongClassifier(std::vector<WeakClassifier> classifiers)
           : classifiers_{classifiers}
   {
     long double galpha = 0;
-    for (auto &classifier : classifiers)
+    for (auto& classifier : classifiers)
       galpha += classifier.alpha_;
 
     global_alpha_ = galpha;
@@ -34,14 +36,14 @@ namespace violajones
   bool StrongClassifier::check(Window win, std::shared_ptr<IntegralImage> image)
   {
     long double sumvalues = 0.0;
-    for (auto &weakclass : classifiers_)
+    for (auto& weakclass : classifiers_)
       sumvalues += weakclass.get_value(win, image);
 
     bool tmp = sumvalues >= (global_alpha_ / 2.0);
     if (Config::debug_classifier_check)
       std::cout << "StrongClassifier::check " << tmp
-          << " - sumvalues: " << sumvalues
-          << " global_alpha: " << global_alpha_ << std::endl;
+      << " - sumvalues: " << sumvalues
+      << " global_alpha: " << global_alpha_ << std::endl;
 
     return tmp;
   }
@@ -50,10 +52,10 @@ namespace violajones
   {
     std::ofstream fs;
     fs.open(path);
-    for (auto &classif : classifiers_)
+    for (auto& classif : classifiers_)
       fs << classif.alpha_ << " "
       << classif.threshold_ << " "
-      << classif.parity_ << " "
+      << (int)classif.parity_ << " "
       << classif.feature_->get_type() << " "
       << classif.feature_->frame.top_left.x << " "
       << classif.feature_->frame.top_left.y << " "
@@ -64,8 +66,8 @@ namespace violajones
 
   StrongClassifier StrongClassifier::load_from_file(std::string path)
   {
-    std::function<WeakClassifier(std::string &)> restore_classifier =
-            [](std::string &s) {
+    std::function<WeakClassifier(std::string&)> restore_classifier =
+            [](std::string& s) {
               std::vector<std::string> tokens;
               boost::split(tokens, s, boost::is_any_of(" ;"));
               double alpha = std::stod(tokens[0]);
@@ -112,19 +114,29 @@ namespace violajones
     << "Loading trainer tests ..." << std::endl;
     auto start = std::chrono::steady_clock::now();
     auto tests_set = load_tests_set(tests_dir);
-    auto &tests = tests_set.first;
-    auto &features_values = tests_set.second;
+    auto& tests = tests_set.first;
+    auto& features_values = tests_set.second;
 
-    unsigned long ncached_features = 0;
-    for (FeatureValues &ftvalues : features_values)
-      if (ftvalues.values_.size())
-        ++ncached_features;
+
+    tbb::atomic<unsigned long> ncached_features = 0;
+
+
+    if (Config::parallelized)
+      tbb::parallel_for_each(features_values.begin(), features_values.end(),
+                             [&ncached_features](FeatureValues& ftvalues) {
+                               if (ftvalues.values_.size())
+                                 ++ncached_features;
+                             });
+    else
+      for (FeatureValues& ftvalues : features_values)
+        if (ftvalues.values_.size())
+          ++ncached_features;
 
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> diff = end - start;
     std::cout << "Tests loaded in " << diff.count() << " seconds ("
-        << ncached_features * 100 / features_values.size()
-        << "% cached)\n Launching training..." << std::endl;
+    << ncached_features * 100 / features_values.size()
+    << "% cached)\n Launching training..." << std::endl;
 
     std::vector<WeakClassifier> classifiers;
     auto ipass = 1;
@@ -134,7 +146,7 @@ namespace violajones
       start = std::chrono::steady_clock::now();
       std::cout << ipass << "/" << Config::learn_pass << " trainer pass..." << std::endl;
       double weightsum = std::accumulate(tests.begin(), tests.end(), 0.0,
-                                         [](double acc, TestImage &t) { return t.weight_ + acc; });
+                                         [](double acc, TestImage& t) { return t.weight_ + acc; });
 
       double validweight = 0.0;
       for (size_t i = 0; i < tests.size(); ++i)
@@ -144,30 +156,43 @@ namespace violajones
           validweight += tests[i].weight_;
       }
 
+
       TestWeakClassifier best(features_values[0], 0, 1, std::numeric_limits<double>::max());
-      // TO PARALLELISE
-      std::for_each(features_values.begin(), features_values.end(),
-                    [&](FeatureValues &fv) {
-                      auto new_classifier = TestWeakClassifier::train(tests, validweight, fv);
-                      if (best.errors_ > new_classifier.errors_)
-                        best = new_classifier;
-                    });
+      if (Config::parallelized)
+      {
+        tbb::parallel_for_each(features_values.begin(), features_values.end(),
+                               [&](FeatureValues& fv) {
+                                 auto new_classifier = TestWeakClassifier::train(tests, validweight, fv);
+                                 tbb::mutex::scoped_lock lock;
+                                 lock.acquire(mutex);
+                                 if (best.errors_ > new_classifier.errors_)
+                                   best = new_classifier;
+                                 lock.release();
+                               });
+      }
+      else
+        std::for_each(features_values.begin(), features_values.end(),
+                      [&](FeatureValues& fv) {
+                        auto new_classifier = TestWeakClassifier::train(tests, validweight, fv);
+                        if (best.errors_ > new_classifier.errors_)
+                          best = new_classifier;
+                      });
 
       end = std::chrono::steady_clock::now();
       diff = end - start;
 
       std::cout << "New weak classifier selected in " << diff.count() << " seconds (error score : "
-          << best.errors_ << ")\n"
-          << "X: " << best.feature_.feature_->frame.top_left.x
-          << " Y: " << best.feature_.feature_->frame.top_left.y
-          << " - Width: " << best.feature_.feature_->frame.width
-          << " Height: " << best.feature_.feature_->frame.height << std::endl;
+      << best.errors_ << ")\n"
+      << "X: " << best.feature_.feature_->frame.top_left.x
+      << " Y: " << best.feature_.feature_->frame.top_left.y
+      << " - Width: " << best.feature_.feature_->frame.width
+      << " Height: " << best.feature_.feature_->frame.height << std::endl;
 
       double beta = best.errors_ / (1.0 - best.errors_);
       if (beta < 1.0 / 100000000)
         beta = 1.0 / 100000000;
 
-      for (FeatureValue &featurevalue : best.feature_.values_)
+      for (FeatureValue& featurevalue : best.feature_.values_)
         if (best.check(featurevalue.value_) == tests[featurevalue.test_index_].valid_)
           tests[featurevalue.test_index_].weight_ *= beta;
 
@@ -176,8 +201,10 @@ namespace violajones
       ++ipass;
     }
 
-    std::cout << "Training finished in " << (std::chrono::steady_clock::now() - global_start).count()
-              << " secs." << std::endl;
+    auto global_end = std::chrono::steady_clock::now();
+    diff = global_end - global_start;
+    std::cout << "Training finished in " << diff.count()
+    << " secs." << std::endl;
     return StrongClassifier(classifiers);
   }
 
@@ -186,18 +213,18 @@ namespace violajones
   {
     std::string gooddir = tests_dir + "/good";
     std::string baddir = tests_dir + "/bad";
-    std::vector<GreyImage> good = load_images(gooddir);
-    std::vector<GreyImage> bad = load_images(baddir);
+    std::vector<std::shared_ptr<GreyImage> > good = load_images(gooddir);
+    std::vector<std::shared_ptr<GreyImage> > bad = load_images(baddir);
 
     double goodweight = 1.0 / (2 * good.size());
     double badweight = 1.0 / (2 * bad.size());
 
     std::vector<TestImage> tests;
     for (size_t i = 0; i < good.size(); ++i)
-      tests.push_back(TestImage(good[i], goodweight, true));
+      tests.push_back(TestImage(*good[i], goodweight, true));
 
     for (auto i = good.size(); i < good.size() + bad.size(); ++i)
-      tests.push_back(TestImage(bad[i - good.size()], badweight, false));
+      tests.push_back(TestImage(*bad[i - good.size()], badweight, false));
 
     auto features_values = compute_features_values(tests);
     return std::pair<std::vector<TestImage>, std::vector<FeatureValues>>(tests, features_values);
@@ -215,32 +242,46 @@ namespace violajones
     return features_values;
   }
 
-  GreyImage StrongClassifier::load_image(std::string imagepath)
+  std::shared_ptr<GreyImage> StrongClassifier::load_image(std::string imagepath)
   {
     sf::Image sfimage;
     sfimage.loadFromFile(imagepath);
     if (sfimage.getSize().x != Config::window_width || sfimage.getSize().y != Config::window_height)
     {
       std::cerr << "Invalid image size (must be "
-          << Config::window_width << "*"
-          << Config::window_height << "): "
-          << imagepath << std::endl;
+      << Config::window_width << "*"
+      << Config::window_height << "): "
+      << imagepath << std::endl;
       exit(1);
     }
-    return GreyImage(sfimage);
+    return std::make_shared<GreyImage>(GreyImage(sfimage));
   }
 
-  std::vector<GreyImage> StrongClassifier::load_images(std::string dir)
+  std::vector<std::shared_ptr<GreyImage> > StrongClassifier::load_images(std::string dir)
   {
     namespace fs = boost::filesystem;
     fs::path path(dir);
     fs::directory_iterator end_itr;
-    std::vector<GreyImage> images;
-    if (fs::exists(path) && fs::is_directory(path))
+    std::vector<std::shared_ptr<GreyImage> > images;
+    if (Config::parallelized)
+    {
+      std::vector<std::string> strings;
+      for (fs::directory_iterator iter(path); iter != end_itr; ++iter)
+        if (fs::is_regular_file(iter->status()))
+          strings.push_back(iter->path().string());
+      tbb::parallel_for_each(strings.begin(), strings.end(),
+                             [&](std::string string) {
+                               auto image = load_image(string);
+                               tbb::mutex::scoped_lock lock;
+                               lock.acquire(mutex);
+                               images.push_back(image);
+                               lock.release();
+                             });
+    }
+    else if (fs::exists(path) && fs::is_directory(path))
       for (fs::directory_iterator iter(path); iter != end_itr; ++iter)
         if (fs::is_regular_file(iter->status()))
           images.push_back(load_image(iter->path().string()));
-    // TODO error if images empty
 
     return images;
   }
