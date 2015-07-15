@@ -285,7 +285,13 @@ namespace violajones
            ++iter, ++number_loaded)
         if (fs::is_regular_file(iter->status()))
           images.push_back(load_image(iter->path().string()));
-    std::cout << "Loaded " << images.size() << " in " << dir << images[0]->pixels->getSize().x << std::endl;
+
+    std::cout << "Loaded " << images.size() << " in " << dir << std::endl;
+    if (!images.size())
+    {
+      std::cerr << "Error: no images has been loaded from: " << dir << std::endl;
+      exit(0);
+    }
 
     return images;
   }
