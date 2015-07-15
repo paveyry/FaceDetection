@@ -10,26 +10,19 @@
 
 namespace violajones
 {
-  std::vector<Rectangle> Detector::detect()
+  tbb::concurrent_vector<Rectangle> Detector::detect()
   {
 
-    std::vector<Rectangle> rectvect;
+    tbb::concurrent_vector<Rectangle> rectvect;
     auto wins = Window::list_windows(image_, squared_image_);
     if (Config::debug_detector_detect)
       std::cout << "Windowlist :" << wins.size() << std::endl;
 
 
-    static tbb::mutex mutex;
     if (Config::parallelized)
       tbb::parallel_for_each(wins.begin(), wins.end(), [&](Window &w) {
         if (classifier_.check(w, image_))
-        {
-          auto rect = w.to_rectangle();
-          tbb::mutex::scoped_lock lock;
-          lock.acquire(mutex);
-          rectvect.push_back(rect);
-          lock.release();
-        }
+          rectvect.push_back(w.to_rectangle());
       });
     else
       for (Window &w : wins)
