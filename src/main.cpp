@@ -107,7 +107,7 @@ int main(int argc, char** argv)
           ("classif,c", po::value<std::string>(), "Specify the classifier to use")
           ("saveclassif,s", po::value<std::string>()->default_value("classif"), "Specify the output classifier file")
           ("verbose,v", po::value<int>()->default_value(0), "Define the verbose level (0, 1, 2)")
-          ("passes,l", po::value<int>()->default_value(400), "Define the nomber of learning passes")
+          ("passes,l", po::value<int>()->default_value(200), "Define the nomber of learning passes")
           ("para,p", "Activates parallelization");
 
 
