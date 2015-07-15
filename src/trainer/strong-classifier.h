@@ -12,6 +12,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <functional>
 #include <algorithm>
+#include <tbb/tbb.h>
 #include "weak-classifier.h"
 #include "feature-value.h"
 #include "test-image.h"
@@ -45,7 +46,7 @@ namespace violajones
 
     static std::shared_ptr<GreyImage> load_image(std::string imagepath);
 
-    static std::vector<std::shared_ptr<GreyImage> > load_images(std::string dir);
+    static tbb::concurrent_vector<std::shared_ptr<GreyImage>> load_images(std::string dir);
 
   public:
     std::vector<WeakClassifier> classifiers_;

@@ -213,8 +213,8 @@ namespace violajones
   {
     std::string gooddir = tests_dir + "/good";
     std::string baddir = tests_dir + "/bad";
-    std::vector<std::shared_ptr<GreyImage> > good = load_images(gooddir);
-    std::vector<std::shared_ptr<GreyImage> > bad = load_images(baddir);
+    auto good = load_images(gooddir);
+    auto bad = load_images(baddir);
 
     double goodweight = 1.0 / (2 * good.size());
     double badweight = 1.0 / (2 * bad.size());
@@ -257,12 +257,12 @@ namespace violajones
     return std::make_shared<GreyImage>(GreyImage(sfimage));
   }
 
-  std::vector<std::shared_ptr<GreyImage> > StrongClassifier::load_images(std::string dir)
+  tbb::concurrent_vector<std::shared_ptr<GreyImage> > StrongClassifier::load_images(std::string dir)
   {
     namespace fs = boost::filesystem;
     fs::path path(dir);
     fs::directory_iterator end_itr;
-    std::vector<std::shared_ptr<GreyImage> > images;
+    tbb::concurrent_vector<std::shared_ptr<GreyImage>> images;
     if (Config::parallelized)
     {
       std::vector<std::string> strings;
@@ -271,11 +271,7 @@ namespace violajones
           strings.push_back(iter->path().string());
       tbb::parallel_for_each(strings.begin(), strings.end(),
                              [&](std::string string) {
-                               auto image = load_image(string);
-                               tbb::mutex::scoped_lock lock;
-                               lock.acquire(mutex);
-                               images.push_back(image);
-                               lock.release();
+                               images.push_back(load_image(string));
                              });
     }
     else if (fs::exists(path) && fs::is_directory(path))
