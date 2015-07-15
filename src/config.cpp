@@ -7,5 +7,6 @@
 int Config::debug_detector_detect = 0;
 int Config::debug_classifier_check = 0;
 int Config::learn_pass = 0;
+int Config::number_load = 0;
 bool Config::parallelized = false;
 

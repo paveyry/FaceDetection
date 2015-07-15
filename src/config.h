@@ -22,6 +22,11 @@ public:
     learn_pass = passes;
   }
 
+  static inline void init_number_load(int nb)
+  {
+    number_load = nb;
+  }
+
   static inline void set_parallelized()
   {
     parallelized = true;
@@ -42,6 +47,7 @@ public:
 
   /* LEARNING */
   static int learn_pass;
+  static int number_load;
 
   /* DEBUG */
   static int debug_detector_detect;
