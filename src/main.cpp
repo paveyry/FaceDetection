@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <chrono>
 #include "image/integral-image.h"
 #include "detector/detector.h"
 #include "config.h"
@@ -23,14 +24,20 @@ static void load(po::variables_map& vm)
 {
   auto classifier = StrongClassifier::load_from_file(vm["classif"].as<std::string>());
   Detector detector{vm["image"].as<std::string>(), classifier};
+
+  auto global_start = std::chrono::steady_clock::now();
   auto d = detector.detect();
+  auto end = std::chrono::steady_clock::now();
 
   int i = 0;
   for (auto& rect : d)
   {
-    std::cerr << "Curr i: " << i++ << " " << rect.to_string() << std::endl;
+    std::cerr << "Rectangle i: " << i++ << " " << rect.to_string() << std::endl;
     rect.draw(detector.image_->image.pixels);
   }
+  std::chrono::duration<double> duration = end - global_start;
+  std::cout << "Detect done in " << duration.count() << " seconds." << std::endl;
+
   std::shared_ptr<sf::Image> img = detector.image_->image.pixels;
   detector.image_->image.pixels->saveToFile(vm["outimage"].as<std::string>());
   sf::RenderWindow window(sf::VideoMode(img->getSize().x, img->getSize().y), "Output image");
