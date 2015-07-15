@@ -46,8 +46,8 @@ public:
   static constexpr int feature_dy = 1;
 
   /* LEARNING */
-  static int learn_pass;
-  static int number_load;
+  static unsigned learn_pass;
+  static unsigned number_load;
 
   /* DEBUG */
   static int debug_detector_detect;

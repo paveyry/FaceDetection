@@ -139,7 +139,7 @@ namespace violajones
     << "% cached)\n Launching training..." << std::endl;
 
     std::vector<WeakClassifier> classifiers;
-    auto ipass = 1;
+    unsigned ipass = 1;
     auto global_start = std::chrono::steady_clock::now();
     while (ipass <= Config::learn_pass)
     {
