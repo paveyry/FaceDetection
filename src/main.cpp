@@ -24,17 +24,15 @@ static void launch_detect(po::variables_map& vm, StrongClassifier& classifier)
 {
   Detector detector{vm["image"].as<std::string>(), classifier};
   auto global_start = std::chrono::steady_clock::now();
+  std::cout << "Beginning detection..." << std::endl;
   auto d = detector.detect();
   auto end = std::chrono::steady_clock::now();
 
-  int i = 0;
   for (auto& rect : d)
-  {
-    std::cerr << "Rectangle i: " << i++ << " " << rect.to_string() << std::endl;
     rect.draw(detector.image_->image.pixels);
-  }
+
   std::chrono::duration<double> duration = end - global_start;
-  std::cout << "Detect done in " << duration.count() << " seconds." << std::endl;
+  std::cout << "Detection done in " << duration.count() << " seconds." << std::endl;
 
   std::shared_ptr<sf::Image> img = detector.image_->image.pixels;
   detector.image_->image.pixels->saveToFile(vm["outimage"].as<std::string>());
