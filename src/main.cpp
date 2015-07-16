@@ -46,7 +46,8 @@ static void launch_detect(po::variables_map& vm, StrongClassifier& classifier)
     while (window.pollEvent(event))
     {
       if (event.type == sf::Event::KeyPressed)
-        window.close();
+        if (event.key.code == sf::Keyboard::Key::Escape)
+          window.close();
       window.clear();
       window.draw(sprite);
       window.display();
