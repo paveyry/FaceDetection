@@ -30,7 +30,7 @@ namespace violajones
       for (auto y = top_left.y; y < top_left.y + height; ++y)
       {
         sf::Color color = image->getPixel(x, y);
-        image->setPixel(x, y, sf::Color{255, color.g, color.b});
+        image->setPixel(x, y, sf::Color{color.r, color.g, 255});
       }
   }
 
