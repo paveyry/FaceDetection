@@ -10,7 +10,6 @@ _build
 .idea
 
 # temporary tests files
-input.png
 output.png
 classif
 
